@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "alien-striker-433917-m2",
+  "private_key_id": "28d3cdd7bf88c0b59fd9af2db463a422a2d6c7a4",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEugIBADANBgkqhkiG9w0BAQEFAASCBKQwggSgAgEAAoIBAQDDpIfnH6mfBA2b\niLfyLFcEF2uWPQTxx+AnU1a2XuOI/2mCxF1lqCHupw/Ev/q9iDsHY6gt6oW5CKNY\nhKVr+qjm/Kf9JnY2ZYH0uUxBuFzkK81iBDIL5R7boddXao5N+UdRqsSX8mj2wd/k\nYDboYa0+hoKA/37oDXrJs+f+JfRyfN2jcfeEI7NYsOPJcL18Sk1NllDPq4bn/lPK\nVFCPKvnGDqtyy0amzLkfF28LDXlrjOBI8Cy3YZDuv5Y4tmN5UGAKg96wxkZHpGf8\nXkCMRgnQ7b31ev7M+5Joq/KLDTT8hVLESb397PsJ7QJZlsJrqGu2KD4TmQkP6+My\n/YIEET+TAgMBAAECggEABSPRqfC9OkzpdcBntVYnT2C1SIjSSxOScjznWMzMrooV\nlA1syU9JShNSiPJk01/Fzc+JhqmUK6k+gfIyxGIdIOBtIkcgwzjzWOIZF/9+VUSR\nnrVlpup+TNWZl/EhOUHrrdKppNtzvYGYlXR7FfTZRrOcHfsPRUOYQOLFwcLugzl0\nX9olmby9HhAGL9eNovFbNSKFl8XUcm/wl0kLNB9FrQQFIy9a7tEiVQ7VvPj087JZ\n8KowqS6toZL/7mjiv77ZGphI4w4Vfb3mvpob9d8IEoM0AUWEfM5yJIeJyZFndGZv\nUgNxQlq3oB6pmGMGTl328z5YZ+RJv8GzhVsSuniQ8QKBgQDvPqklMOZWVHQ7Pw3d\nT6sATpqoFvJb0g6fgsw9VAM4aXrAZza+OEdbb4NnZmmu0+QYscdoE6YsJYyTgSdm\n3fGSIFi+Xx9YicF9bNWvh2O/7iId8YyisYY26/7NST9pCY/oPNsZ3y3+WeucMMw4\nZoAj1Hu/juXFFZswT5Ru3RqREQKBgQDRWCSsETIABhMNxWCrfPGmEalnUi+lfzXC\n8b4k68BrPfkd1RmDIL0/n5SiN4qUYqQAX9G6yCFPyLvXKppAntQl7BYGz9MMezUe\nYEuY5D0W0UNSoTPMc+Rjd2nnhvoGxYf+yL0+P90DbHikgNNQidkv/Ks9dKKJ/XoQ\n0Md8jRjGYwJ/bGf4POHrfTLHeBEaNy3iTkFP0tqS9wg3mA+sfB2VV/pzpLsgExFt\nRAFDiZbeTFm3AXmM4ZwFr/tTt4LOV845p/0AOULg8T16b1rheKfgixdcXjUVhKLs\nLfbBfkOyd+XdT15D6XU3YglcuWljICtR5OpjKGmXs7YWm81zdMi7QQKBgDfE5ogc\nUJinBZ5ujZFByNJ39Aw9XcoV+ImFgyUs1Ob87IehBJnlN+ViKuOILlfXa19aJ3I9\n7HnnvPrWM5+xcEzl9vw7kzrI+96qwpjpfMi+WNQDc9wsp5RD9KekUqlJKDCc46VY\nuBU4aW9RjnnvLzfUdP37O23NZB5ksDAjGo2HAoGAHFNstd4sejSAAZ/DYLs7+Drl\nTpXcQZv9jBIE6RQfelxJ1dvep4TkgJ8y4ZeXcIWKDRfnA61ShkyL+1dk2/Vw78Oi\non8J4wRKlFyjkH+C20xSN6qYBBA5nPBxMUQhzN7afw6XWQpxD9YSTRRyHdeu4mDj\nlNA5z15DTpSKoYW4vRU=\n-----END PRIVATE KEY-----\n",
+  "client_email": "forms-114@alien-striker-433917-m2.iam.gserviceaccount.com",
+  "client_id": "115672129673910999168",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/forms-114%40alien-striker-433917-m2.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
