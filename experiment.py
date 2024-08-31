@@ -6,10 +6,6 @@ import toml
 # Load the credentials from Streamlit secrets
 secret_toml = st.secrets.get("secret_toml")
 
-if not secret_toml:
-    st.error("Secret TOML not found. Please make sure it's correctly set in Streamlit Secrets.")
-    st.stop()
-
 # Parse the TOML content
 secret_config = toml.loads(secret_toml)
 
