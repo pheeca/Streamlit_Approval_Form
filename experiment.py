@@ -37,8 +37,8 @@ def fetch_options(sheet, tab_name):
     return data
 
 # Update tab names based on your sheet
-options_data = fetch_options(sheet, "Config")
-sections_data = fetch_options(sheet, "Config")
+options_data = fetch_options(sheet, "Config")  # Ensure this tab exists
+sections_data = fetch_options(sheet, "Config")  # Ensure this tab exists
 
 if not options_data or not sections_data:
     st.error("Unable to fetch data from Google Sheets.")
@@ -47,12 +47,13 @@ if not options_data or not sections_data:
 # Convert options data into a usable format
 options = {}
 for entry in options_data:
+    # Use 'Sponsorship Type' as the key for options
     option_name = entry['Sponsorship Type']
     options[option_name] = {
         "points": entry['Points'],
-        "max": entry['Max'],
-        "uid": entry['UID'],
-        "description": entry.get('Details', '').split(',')
+        "max": entry['Max'],  # Assuming 'Max' value is available
+        "uid": entry['UID'],  # Assuming 'UID' value is available
+        "description": entry.get('Details', '').split(',')  # Use 'Details' instead of 'Description'
     }
 
 # Convert sections data into a usable format
@@ -76,30 +77,30 @@ email = st.text_input("Email")
 total_points = st.number_input("Enter Total Points Allotted", min_value=0, value=0)
 
 # Initialize session state for total_points and remaining_points
-if 'total_points' not in st.session_state:
+if 'total_points' not in st.session_state or st.session_state.total_points != total_points:
     st.session_state.total_points = total_points
-
-if 'remaining_points' not in st.session_state:
     st.session_state.remaining_points = total_points
 
 # Initialize session state for selected options
 if 'selected_options' not in st.session_state:
-    st.session_state.selected_options = {option: False for option in options.keys()}
+    st.session_state.selected_options = {}
 
 # Function to update remaining points
 def update_remaining_points():
-    deducted_points = sum(option_info['points'] for option, option_info in options.items() if st.session_state.selected_options[option])
+    # Calculate total deducted points based on selected options
+    deducted_points = sum(
+        options[option_key.split("_")[1]]['points']
+        for option_key, selected in st.session_state.selected_options.items()
+        if selected
+    )
     st.session_state.remaining_points = st.session_state.total_points - deducted_points
-
-# Update session state values
-st.session_state.total_points = total_points
-update_remaining_points()
 
 # Displaying sections and options
 for section, section_options in event_sections.items():
-    st.subheader(section)
+    st.subheader(section)  # Ensure this is rendered correctly
     for option in section_options:
         if option in options:
+            # Use a unique key combining the section and option name
             unique_key = f"{section}_{option}"
             option_info = options[option]
             points = option_info['points']
@@ -107,16 +108,23 @@ for section, section_options in event_sections.items():
             description = option_info["description"]
             uid = option_info['uid']
 
+            # Clean and format the description into bullet points
             formatted_description = "\n".join([f"- {desc.strip()}" for desc in description if desc.strip()])
 
-            st.session_state.selected_options[option] = st.checkbox(
-                f"**{option}** - Points: {points}, Max: {max_range}",
-                value=st.session_state.selected_options[option],
+            # Display the checkbox and associated details
+            st.session_state.selected_options[unique_key] = st.checkbox(
+                f"**{option}** - Points: {points}, Max: {max_range}",  # Keep the UID in a separate section if needed
+                value=st.session_state.selected_options.get(unique_key, False),
                 key=unique_key
             )
+            
+            # Use st.markdown to ensure correct rendering of the formatted description
             st.markdown(formatted_description)
 
+    # Add a clear divider between sections
     st.write("---")
+
+# Update remaining points after rendering options
 update_remaining_points()
 
 # Display remaining points
@@ -124,9 +132,11 @@ st.write(f"### Remaining Points: {st.session_state.remaining_points}")
 
 # Submit button
 if st.button("Submit"):
-    selected_options = [option for option, selected in st.session_state.selected_options.items() if selected]
+    # Collect selected options and their UIDs
+    selected_options = [key.split("_")[1] for key, selected in st.session_state.selected_options.items() if selected]
     selected_uids = [options[option]['uid'] for option in selected_options]
 
+    # Prepare data to store in Google Sheets
     data = {
         "Name": name,
         "Company": company,
@@ -137,16 +147,23 @@ if st.button("Submit"):
         "UID": ", ".join(selected_uids)
     }
 
-    worksheet = sheet.worksheet("Sheet1")
-    worksheet.append_row(list(data.values()))
+    # Store data in Google Sheets
+    sheet.worksheet("Sheet1").append_row([data["Name"], data["Company"], data["Email"], data["Total Points"], data["Remaining Points"], data["Selected Options"], data["UID"]])
 
-    config_data = worksheet.get_all_records()
+    # Update Max value in Config sheet based on selected UIDs
+    config_worksheet = sheet.worksheet("Config")
+    config_data = config_worksheet.get_all_records()
+
+    # Loop through config_data and find the matching UIDs
     for i, entry in enumerate(config_data):
         if entry['UID'] in selected_uids:
+            # Subtract 1 from the Max field for the selected UID
             new_max = entry['Max'] - 1
-            worksheet.update_cell(i + 2, worksheet.find("Max").col, new_max)  # Adjust row and column accordingly
+            # Update the Max value in the sheet
+            config_worksheet.update_cell(i + 2, config_worksheet.find('Max').col, new_max)
 
-    st.session_state.selected_options = {option: False for option in options.keys()}
+    # Reset form inputs by clearing session state values
+    st.session_state.selected_options = {}
     st.session_state.total_points = 0
     st.session_state.remaining_points = 0
     st.success("Form submitted successfully!")
