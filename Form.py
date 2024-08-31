@@ -101,7 +101,7 @@ for section, section_options in event_sections.items():
             st.markdown(formatted_description)
 
     st.write("---")  # Divider line between sections
-
+update_remaining_points()
 # Display remaining points
 st.write(f"### Remaining Points: {st.session_state.remaining_points}")
 
