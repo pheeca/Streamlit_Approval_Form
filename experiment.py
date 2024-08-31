@@ -5,10 +5,10 @@ import toml
 import io
 
 # Access secrets from Streamlit's secret management
-secret_toml = st.secrets["google_sheets"]
+secret_config = st.secrets["google_sheets"]
 
 # Parse the TOML content
-secret_config = toml.loads(secret_toml)
+#secret_config = toml.loads(secret_toml)
 
 # Extract service account information
 try:
