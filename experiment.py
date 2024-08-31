@@ -2,9 +2,17 @@ import streamlit as st
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import toml
+import os
 
-# Load the credentials from the toml file
-secret_config = toml.load("secret.toml")
+# Load the credentials from environment variables
+secret_toml = os.getenv("secret")
+
+if not secret_toml:
+    st.error("Secret TOML not found. Please make sure it's correctly set in GitHub Secrets.")
+    st.stop()
+
+# Parse the TOML content
+secret_config = toml.loads(secret_toml)
 
 # Extract service account information
 try:
