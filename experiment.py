@@ -5,29 +5,24 @@ import toml
 import io
 
 # Access secrets from Streamlit's secret management
-secret_config = st.secrets["google_sheets"]
+google_sheets_config = st.secrets["google_sheets"]
 
 # Parse the TOML content
 #secret_config = toml.loads(secret_toml)
 
 # Extract service account information
-try:
-    google_sheets_config = secret_config['google_sheets']
-    service_account_info = {
-        "type": google_sheets_config["type"],
-        "project_id": google_sheets_config["project_id"],
-        "private_key_id": google_sheets_config["private_key_id"],
-        "private_key": google_sheets_config["private_key"].replace("\n", "\n"),
-        "client_email": google_sheets_config["client_email"],
-        "client_id": google_sheets_config["client_id"],
-        "auth_uri": google_sheets_config["auth_uri"],
-        "token_uri": google_sheets_config["token_uri"],
-        "auth_provider_x509_cert_url": google_sheets_config["auth_provider_x509_cert_url"],
-        "client_x509_cert_url": google_sheets_config["client_x509_cert_url"]
-    }
-except KeyError as e:
-    st.error(f"Missing key in TOML file: {e}")
-    st.stop()
+service_account_info = {
+    "type": google_sheets_config["type"],
+    "project_id": google_sheets_config["project_id"],
+    "private_key_id": google_sheets_config["private_key_id"],
+    "private_key": google_sheets_config["private_key"].replace("\n", "\n"),
+    "client_email": google_sheets_config["client_email"],
+    "client_id": google_sheets_config["client_id"],
+    "auth_uri": google_sheets_config["auth_uri"],
+    "token_uri": google_sheets_config["token_uri"],
+    "auth_provider_x509_cert_url": google_sheets_config["auth_provider_x509_cert_url"],
+    "client_x509_cert_url": google_sheets_config["client_x509_cert_url"]
+}
 
 # Google Sheets setup
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
