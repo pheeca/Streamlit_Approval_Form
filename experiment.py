@@ -5,7 +5,7 @@ import toml
 import os
 
 # Load the credentials from environment variables
-secret_toml = os.getenv("secret")
+secret_toml = os.getenv("SECRET")
 
 if not secret_toml:
     st.error("Secret TOML not found. Please make sure it's correctly set in GitHub Secrets.")
