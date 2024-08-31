@@ -2,6 +2,7 @@ import streamlit as st
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import toml
+import io
 
 # Load the credentials from Streamlit secrets
 secret_toml = st.secrets.get("secret_toml")
