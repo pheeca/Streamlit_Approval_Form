@@ -7,7 +7,7 @@ import toml
 secret_toml = st.secrets.get("secret_toml")
 
 # Parse the TOML content
-secret_config = toml.loads(secret_toml)
+secret_config = toml.loads(io.StringIO(secret_toml))
 
 # Extract service account information
 try:
