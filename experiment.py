@@ -4,11 +4,11 @@ from oauth2client.service_account import ServiceAccountCredentials
 import toml
 import io
 
-# Load the credentials from Streamlit secrets
-secret_toml = st.secrets.get("secret_toml")
+# Access secrets from Streamlit's secret management
+secret_toml = st.secrets["google_sheets"]
 
 # Parse the TOML content
-secret_config = toml.loads(io.StringIO(secret_toml))
+secret_config = toml.loads(secret_toml)
 
 # Extract service account information
 try:
