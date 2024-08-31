@@ -2,13 +2,12 @@ import streamlit as st
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import toml
-import os
 
-# Load the credentials from environment variables
-secret_toml = os.getenv("SECRET")
+# Load the credentials from Streamlit secrets
+secret_toml = st.secrets.get("secret_toml")
 
 if not secret_toml:
-    st.error("Secret TOML not found. Please make sure it's correctly set in GitHub Secrets.")
+    st.error("Secret TOML not found. Please make sure it's correctly set in Streamlit Secrets.")
     st.stop()
 
 # Parse the TOML content
