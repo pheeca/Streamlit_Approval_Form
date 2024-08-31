@@ -37,8 +37,8 @@ def fetch_options(sheet, tab_name):
     return data
 
 # Update tab names based on your sheet
-options_data = fetch_options(sheet, "Config")  # Ensure this tab exists
-sections_data = fetch_options(sheet, "Config")  # Ensure this tab exists
+options_data = fetch_options(sheet, "Config")
+sections_data = fetch_options(sheet, "Config")
 
 if not options_data or not sections_data:
     st.error("Unable to fetch data from Google Sheets.")
@@ -47,13 +47,14 @@ if not options_data or not sections_data:
 # Convert options data into a usable format
 options = {}
 for entry in options_data:
-    # Use 'Sponsorship Type' as the key for options
     option_name = entry['Sponsorship Type']
     options[option_name] = {
         "points": entry['Points'],
-        "max": entry['Max'],  # Assuming 'Max' value is available
-        "uid": entry['UID'],  # Assuming 'UID' value is available
-        "description": entry.get('Details', '').split(',')  # Use 'Details' instead of 'Description'
+        "max": entry['Max'],
+        "uid": entry['UID'],
+        "description": entry.get('Details', '').split(','),
+        "max_month_selection": entry.get('Max Month Selection', None),
+        "computed_months_options": entry.get('Computed Months Options', '').split(',')
     }
 
 # Convert sections data into a usable format
@@ -81,13 +82,14 @@ if 'total_points' not in st.session_state or st.session_state.total_points != to
     st.session_state.total_points = total_points
     st.session_state.remaining_points = total_points
 
-# Initialize session state for selected options
+# Initialize session state for selected options and months
 if 'selected_options' not in st.session_state:
     st.session_state.selected_options = {}
+if 'selected_months' not in st.session_state:
+    st.session_state.selected_months = {}
 
 # Function to update remaining points
 def update_remaining_points():
-    # Calculate total deducted points based on selected options
     deducted_points = sum(
         options[option_key.split("_")[1]]['points']
         for option_key, selected in st.session_state.selected_options.items()
@@ -97,10 +99,9 @@ def update_remaining_points():
 
 # Displaying sections and options
 for section, section_options in event_sections.items():
-    st.subheader(section)  # Ensure this is rendered correctly
+    st.subheader(section)
     for option in section_options:
         if option in options:
-            # Use a unique key combining the section and option name
             unique_key = f"{section}_{option}"
             option_info = options[option]
             points = option_info['points']
@@ -113,11 +114,23 @@ for section, section_options in event_sections.items():
 
             # Display the checkbox and associated details
             st.session_state.selected_options[unique_key] = st.checkbox(
-                f"**{option}** - Points: {points}, Max: {max_range}",  # Keep the UID in a separate section if needed
+                f"**{option}** - Points: {points}, Max: {max_range}",
                 value=st.session_state.selected_options.get(unique_key, False),
                 key=unique_key
             )
-            
+
+            # Show the dropdown for months if the option is selected and it's a Luncheons option
+            if st.session_state.selected_options[unique_key] and "Luncheon" in option:
+                max_months = option_info['max_month_selection']
+                available_months = option_info['computed_months_options']
+                selected_months_key = f"{unique_key}_months"
+                st.session_state.selected_months[selected_months_key] = st.multiselect(
+                    f"Select up to {max_months} months for {option}",
+                    available_months,
+                    default=st.session_state.selected_months.get(selected_months_key, []),
+                    max_selections=max_months
+                )
+
             # Use st.markdown to ensure correct rendering of the formatted description
             st.markdown(formatted_description)
 
@@ -132,9 +145,13 @@ st.write(f"### Remaining Points: {st.session_state.remaining_points}")
 
 # Submit button
 if st.button("Submit"):
-    # Collect selected options and their UIDs
     selected_options = [key.split("_")[1] for key, selected in st.session_state.selected_options.items() if selected]
     selected_uids = [options[option]['uid'] for option in selected_options]
+
+    # Collect selected months data
+    selected_months_data = {
+        key: ", ".join(months) for key, months in st.session_state.selected_months.items() if months
+    }
 
     # Prepare data to store in Google Sheets
     data = {
@@ -144,26 +161,28 @@ if st.button("Submit"):
         "Total Points": st.session_state.total_points,
         "Remaining Points": st.session_state.remaining_points,
         "Selected Options": ", ".join([f"{option} (UID: {options[option]['uid']})" for option in selected_options]),
-        "UID": ", ".join(selected_uids)
+        "UID": ", ".join(selected_uids),
+        "Selected Months": str(selected_months_data)  # Convert dictionary to string
     }
 
     # Store data in Google Sheets
-    sheet.worksheet("Sheet1").append_row([data["Name"], data["Company"], data["Email"], data["Total Points"], data["Remaining Points"], data["Selected Options"], data["UID"]])
+    sheet.worksheet("Sheet1").append_row([
+        data["Name"], data["Company"], data["Email"], data["Total Points"],
+        data["Remaining Points"], data["Selected Options"], data["UID"], data["Selected Months"]
+    ])
 
     # Update Max value in Config sheet based on selected UIDs
     config_worksheet = sheet.worksheet("Config")
     config_data = config_worksheet.get_all_records()
 
-    # Loop through config_data and find the matching UIDs
     for i, entry in enumerate(config_data):
         if entry['UID'] in selected_uids:
-            # Subtract 1 from the Max field for the selected UID
             new_max = entry['Max'] - 1
-            # Update the Max value in the sheet
             config_worksheet.update_cell(i + 2, config_worksheet.find('Max').col, new_max)
 
     # Reset form inputs by clearing session state values
     st.session_state.selected_options = {}
+    st.session_state.selected_months = {}
     st.session_state.total_points = 0
     st.session_state.remaining_points = 0
     st.success("Form submitted successfully!")
