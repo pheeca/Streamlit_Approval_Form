@@ -3,6 +3,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import toml
 import io
+from datetime import datetime  # Import datetime module
 
 # Access secrets from Streamlit's secret management
 google_sheets_config = st.secrets["google_sheets"]
@@ -97,6 +98,9 @@ def update_remaining_points():
     )
     st.session_state.remaining_points = st.session_state.total_points - deducted_points
 
+# Pre-calculate remaining points before rendering the UI
+update_remaining_points()
+
 # Displaying sections and options
 for section, section_options in event_sections.items():
     st.subheader(section)
@@ -112,12 +116,26 @@ for section, section_options in event_sections.items():
             # Clean and format the description into bullet points
             formatted_description = "\n".join([f"- {desc.strip()}" for desc in description if desc.strip()])
 
-            # Display the checkbox and associated details
-            st.session_state.selected_options[unique_key] = st.checkbox(
+            # Initialize the session state for the unique key if it doesn't exist
+            if unique_key not in st.session_state.selected_options:
+                st.session_state.selected_options[unique_key] = False
+
+            # Determine if the checkbox should be disabled
+            disabled = (st.session_state.remaining_points < points) and not st.session_state.selected_options[unique_key]
+
+            # Display the checkbox and immediately update the session state based on the checkbox value
+            selected = st.checkbox(
                 f"**{option}** - Points: {points}, Max: {max_range}",
-                value=st.session_state.selected_options.get(unique_key, False),
-                key=unique_key
+                value=st.session_state.selected_options[unique_key],
+                key=unique_key,
+                disabled=disabled
             )
+
+            # Update session state based on the checkbox selection
+            if selected != st.session_state.selected_options[unique_key]:
+                st.session_state.selected_options[unique_key] = selected
+                # Update remaining points and re-evaluate disabling logic immediately
+                update_remaining_points()
 
             # Show the dropdown for months if the option is selected and it's a Luncheons option
             if st.session_state.selected_options[unique_key] and "Luncheon" in option:
@@ -137,7 +155,7 @@ for section, section_options in event_sections.items():
     # Add a clear divider between sections
     st.write("---")
 
-# Update remaining points after rendering options
+# Update remaining points again after rendering options
 update_remaining_points()
 
 # Display remaining points
@@ -153,6 +171,9 @@ if st.button("Submit"):
         key: ", ".join(months) for key, months in st.session_state.selected_months.items() if months
     }
 
+    # Add current date and time to the data
+    submission_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
     # Prepare data to store in Google Sheets
     data = {
         "Name": name,
@@ -162,13 +183,14 @@ if st.button("Submit"):
         "Remaining Points": st.session_state.remaining_points,
         "Selected Options": ", ".join([f"{option} (UID: {options[option]['uid']})" for option in selected_options]),
         "UID": ", ".join(selected_uids),
-        "Selected Months": str(selected_months_data)  # Convert dictionary to string
+        "Selected Months": str(selected_months_data),  # Convert dictionary to string
+        "Submission Date": submission_date  # Add the date to the data dictionary
     }
 
     # Store data in Google Sheets
     sheet.worksheet("Sheet1").append_row([
         data["Name"], data["Company"], data["Email"], data["Total Points"],
-        data["Remaining Points"], data["Selected Options"], data["UID"], data["Selected Months"]
+        data["Remaining Points"], data["Selected Options"], data["UID"], data["Selected Months"], data["Submission Date"]
     ])
 
     # Update Max value in Config sheet based on selected UIDs
@@ -177,7 +199,8 @@ if st.button("Submit"):
 
     for i, entry in enumerate(config_data):
         if entry['UID'] in selected_uids:
-            new_max = entry['Max'] - 1
+            max_value = int(entry['Max'])
+            new_max = max_value - 1
             config_worksheet.update_cell(i + 2, config_worksheet.find('Max').col, new_max)
 
     # Reset form inputs by clearing session state values
