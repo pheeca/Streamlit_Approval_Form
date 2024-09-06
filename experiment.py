@@ -4,23 +4,22 @@ from oauth2client.service_account import ServiceAccountCredentials
 import toml
 from datetime import datetime
 
-# Load the credentials from the toml file
-secret_config = toml.load("secret.toml")
+# Load the TOML configuration from Streamlit secrets
+secret_config = st.secrets["google_sheets"]
 
 # Extract service account information
 try:
-    google_sheets_config = secret_config['google_sheets']
     service_account_info = {
-        "type": google_sheets_config["type"],
-        "project_id": google_sheets_config["project_id"],
-        "private_key_id": google_sheets_config["private_key_id"],
-        "private_key": google_sheets_config["private_key"].replace("\\n", "\n"),
-        "client_email": google_sheets_config["client_email"],
-        "client_id": google_sheets_config["client_id"],
-        "auth_uri": google_sheets_config["auth_uri"],
-        "token_uri": google_sheets_config["token_uri"],
-        "auth_provider_x509_cert_url": google_sheets_config["auth_provider_x509_cert_url"],
-        "client_x509_cert_url": google_sheets_config["client_x509_cert_url"]
+        "type": secret_config["type"],
+        "project_id": secret_config["project_id"],
+        "private_key_id": secret_config["private_key_id"],
+        "private_key": secret_config["private_key"].replace("\\n", "\n"),
+        "client_email": secret_config["client_email"],
+        "client_id": secret_config["client_id"],
+        "auth_uri": secret_config["auth_uri"],
+        "token_uri": secret_config["token_uri"],
+        "auth_provider_x509_cert_url": secret_config["auth_provider_x509_cert_url"],
+        "client_x509_cert_url": secret_config["client_x509_cert_url"]
     }
 except KeyError as e:
     st.error(f"Missing key in TOML file: {e}")
