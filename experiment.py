@@ -2,28 +2,29 @@ import streamlit as st
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import toml
-import io
-from datetime import datetime  # Import datetime module
+from datetime import datetime
 
-# Access secrets from Streamlit's secret management
-google_sheets_config = st.secrets["google_sheets"]
-
-# Parse the TOML content
-#secret_config = toml.loads(secret_toml)
+# Load the credentials from the toml file
+secret_config = toml.load("secret.toml")
 
 # Extract service account information
-service_account_info = {
-    "type": google_sheets_config["type"],
-    "project_id": google_sheets_config["project_id"],
-    "private_key_id": google_sheets_config["private_key_id"],
-    "private_key": google_sheets_config["private_key"].replace("\n", "\n"),
-    "client_email": google_sheets_config["client_email"],
-    "client_id": google_sheets_config["client_id"],
-    "auth_uri": google_sheets_config["auth_uri"],
-    "token_uri": google_sheets_config["token_uri"],
-    "auth_provider_x509_cert_url": google_sheets_config["auth_provider_x509_cert_url"],
-    "client_x509_cert_url": google_sheets_config["client_x509_cert_url"]
-}
+try:
+    google_sheets_config = secret_config['google_sheets']
+    service_account_info = {
+        "type": google_sheets_config["type"],
+        "project_id": google_sheets_config["project_id"],
+        "private_key_id": google_sheets_config["private_key_id"],
+        "private_key": google_sheets_config["private_key"].replace("\\n", "\n"),
+        "client_email": google_sheets_config["client_email"],
+        "client_id": google_sheets_config["client_id"],
+        "auth_uri": google_sheets_config["auth_uri"],
+        "token_uri": google_sheets_config["token_uri"],
+        "auth_provider_x509_cert_url": google_sheets_config["auth_provider_x509_cert_url"],
+        "client_x509_cert_url": google_sheets_config["client_x509_cert_url"]
+    }
+except KeyError as e:
+    st.error(f"Missing key in TOML file: {e}")
+    st.stop()
 
 # Google Sheets setup
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -37,7 +38,6 @@ def fetch_options(sheet, tab_name):
     data = worksheet.get_all_records()
     return data
 
-# Update tab names based on your sheet
 options_data = fetch_options(sheet, "Config")
 sections_data = fetch_options(sheet, "Config")
 
@@ -49,12 +49,25 @@ if not options_data or not sections_data:
 options = {}
 for entry in options_data:
     option_name = entry['Sponsorship Type']
+    try:
+        points = int(entry['Points'])
+    except ValueError:
+        points = 0
+    try:
+        max_range = int(entry['Max'])
+    except ValueError:
+        max_range = 0
+    try:
+        max_month_selection = int(entry.get('Max Month Selection', 0))
+    except ValueError:
+        max_month_selection = 0
+    
     options[option_name] = {
-        "points": entry['Points'],
-        "max": entry['Max'],
+        "points": points,
+        "max": max_range,
         "uid": entry['UID'],
         "description": entry.get('Details', '').split(','),
-        "max_month_selection": entry.get('Max Month Selection', None),
+        "max_month_selection": max_month_selection,
         "computed_months_options": entry.get('Computed Months Options', '').split(',')
     }
 
@@ -67,8 +80,25 @@ for entry in sections_data:
         event_sections[section] = []
     event_sections[section].append(option)
 
+# Function to handle months selection and session state update
+def handle_month_selection(unique_key, max_months, available_months):
+    selected_months_key = f"{unique_key}_months"
+    
+    if selected_months_key not in st.session_state:
+        st.session_state[selected_months_key] = []
+
+    selected_months = st.multiselect(
+        f"Select up to {max_months} months",
+        available_months,
+        default=st.session_state[selected_months_key],
+        max_selections=max_months
+    )
+
+    st.session_state[selected_months_key] = selected_months
+
 # Streamlit form
-st.title("Sponsorship Selection Form")
+st.image("logo.jpg", width=200)
+st.title("Westchester Chamber Alliance Sponsorship")
 
 # Basic information inputs
 name = st.text_input("Name")
@@ -134,32 +164,30 @@ for section, section_options in event_sections.items():
             # Update session state based on the checkbox selection
             if selected != st.session_state.selected_options[unique_key]:
                 st.session_state.selected_options[unique_key] = selected
-                # Update remaining points and re-evaluate disabling logic immediately
                 update_remaining_points()
 
             # Show the dropdown for months if the option is selected and it's a Luncheons option
             if st.session_state.selected_options[unique_key] and "Luncheon" in option:
                 max_months = option_info['max_month_selection']
                 available_months = option_info['computed_months_options']
-                selected_months_key = f"{unique_key}_months"
-                st.session_state.selected_months[selected_months_key] = st.multiselect(
-                    f"Select up to {max_months} months for {option}",
-                    available_months,
-                    default=st.session_state.selected_months.get(selected_months_key, []),
-                    max_selections=max_months
-                )
+                handle_month_selection(unique_key, max_months, available_months)
 
-            # Use st.markdown to ensure correct rendering of the formatted description
+            # Display the formatted description
             st.markdown(formatted_description)
 
-    # Add a clear divider between sections
     st.write("---")
 
 # Update remaining points again after rendering options
 update_remaining_points()
 
-# Display remaining points
-st.write(f"### Remaining Points: {st.session_state.remaining_points}")
+# Display remaining points in the sidebar only when total_points > 0
+if st.session_state.total_points > 0:
+    st.sidebar.title("Submission Details")
+    st.sidebar.write(f"**Name:** {name}")
+    st.sidebar.write(f"**Email:** {email}")
+    st.sidebar.write(f"**Company:** {company}")
+    st.sidebar.write(f"**Total Points Allotted:** {st.session_state.total_points}")
+    st.sidebar.write(f"### Remaining Points: {st.session_state.remaining_points}")
 
 # Submit button
 if st.button("Submit"):
@@ -168,7 +196,7 @@ if st.button("Submit"):
 
     # Collect selected months data
     selected_months_data = {
-        key: ", ".join(months) for key, months in st.session_state.selected_months.items() if months
+        key: ", ".join(months) for key, months in st.session_state.items() if months and key.endswith("_months")
     }
 
     # Add current date and time to the data
@@ -199,9 +227,12 @@ if st.button("Submit"):
 
     for i, entry in enumerate(config_data):
         if entry['UID'] in selected_uids:
-            max_value = int(entry['Max'])
-            new_max = max_value - 1
-            config_worksheet.update_cell(i + 2, config_worksheet.find('Max').col, new_max)
+            try:
+                max_value = int(entry['Max'])
+                new_max = max_value - 1
+                config_worksheet.update_cell(i + 2, config_worksheet.find('Max').col, new_max)
+            except ValueError:
+                pass  # Ignore entries with invalid max values
 
     # Reset form inputs by clearing session state values
     st.session_state.selected_options = {}
