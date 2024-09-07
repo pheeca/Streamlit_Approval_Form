@@ -28,7 +28,7 @@ except KeyError as e:
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scope)
 client = gspread.authorize(creds)
-sheet = client.open_by_key("YOUR_GOOGLE_SHEET_ID")  # Replace with your actual Google Sheet ID
+sheet = client.open_by_key("16Ln8V-XTaSKDm1ycu5CNUkki-x2STgVvPHxSnOPKOwM")  # Replace with your actual Google Sheet ID
 
 # Fetching options and descriptions from the sheet
 def fetch_options(sheet, tab_name):
