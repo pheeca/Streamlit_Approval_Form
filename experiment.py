@@ -28,13 +28,18 @@ except KeyError as e:
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scope)
 client = gspread.authorize(creds)
-sheet = client.open_by_key("16Ln8V-XTaSKDm1ycu5CNUkki-x2STgVvPHxSnOPKOwM")  # Replace with your actual Google Sheet ID
+sheet_id = "16Ln8V-XTaSKDm1ycu5CNUkki-x2STgVvPHxSnOPKOwM"  # Replace with your actual Google Sheet ID
+sheet = client.open_by_key(sheet_id)
 
 # Fetching options and descriptions from the sheet
 def fetch_options(sheet, tab_name):
-    worksheet = sheet.worksheet(tab_name)
-    data = worksheet.get_all_records()
-    return data
+    try:
+        worksheet = sheet.worksheet(tab_name)
+        data = worksheet.get_all_records()
+        return data
+    except gspread.exceptions.WorksheetNotFound:
+        st.error(f"Worksheet {tab_name} not found in Google Sheets.")
+        st.stop()
 
 options_data = fetch_options(sheet, "Config")
 sections_data = fetch_options(sheet, "Config")
@@ -201,40 +206,38 @@ if st.button("Submit"):
     submission_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # Prepare data to store in Google Sheets for raw data
-    raw_data = {
-        "UID": ", ".join(selected_uids),
-        "Name": name,
-        "Company": company,
-        "Email": email,
-        "Total Points": st.session_state.total_points,
-        "Remaining Points": st.session_state.remaining_points
-    }
+    raw_data = [
+        ", ".join(selected_uids), name, company, email,
+        st.session_state.total_points, st.session_state.remaining_points
+    ]
 
     # Fetch the 'Submitted' sheet for raw data
-    submitted_worksheet = sheet.worksheet("Submitted")
+    try:
+        submitted_worksheet = sheet.worksheet("Submitted")
+        submitted_worksheet.append_row(raw_data)
 
-    # Store raw data (UID, Name, Company, etc.)
-    submitted_worksheet.append_row([
-        raw_data["UID"], raw_data["Name"], raw_data["Company"], raw_data["Email"],
-        raw_data["Total Points"], raw_data["Remaining Points"]
-    ])
+        # Update Max value in Config sheet based on selected UIDs
+        config_worksheet = sheet.worksheet("Config")
+        config_data = config_worksheet.get_all_records()
 
-    # Update Max value in Config sheet based on selected UIDs
-    config_worksheet = sheet.worksheet("Config")
-    config_data = config_worksheet.get_all_records()
-
-    # Dynamically create columns for event sponsorships and store "Yes"
-    headers = submitted_worksheet.row_values(1)
-    for option in selected_options:
-        column_name = f"{section}_{option}"  # Adjust based on your column naming scheme
-        if column_name not in headers:
-            submitted_worksheet.add_cols(1)
-            col_index = len(headers) + 1
-            submitted_worksheet.update_cell(1, col_index, column_name)
-        else:
-            col_index = headers.index(column_name) + 1
-        # Mark the selected option as "Yes" in the appropriate column
-        submitted_worksheet.update_cell(submitted_worksheet.row_count, col_index, "Yes")
+        # Dynamically create columns for event sponsorships and store "Yes"
+        headers = submitted_worksheet.row_values(1)
+        for option in selected_options:
+            column_name = f"{section}_{option}"  # Adjust based on your column naming scheme
+            if column_name not in headers:
+                submitted_worksheet.add_cols(1)
+                col_index = len(headers) + 1
+                submitted_worksheet.update_cell(1, col_index, column_name)
+            else:
+                col_index = headers.index(column_name) + 1
+            # Mark the selected option as "Yes" in the appropriate column
+            submitted_worksheet.update_cell(submitted_worksheet.row_count, col_index, "Yes")
+    except gspread.exceptions.APIError as e:
+        st.error(f"Google Sheets API error: {e}")
+        st.stop()
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+        st.stop()
 
     # Reset form inputs by clearing session state values
     st.session_state.selected_options = {}
