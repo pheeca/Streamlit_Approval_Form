@@ -156,7 +156,7 @@ for section, section_options in event_sections.items():
                 st.session_state.selected_options[unique_key] = False
 
             # Determine if the checkbox should be disabled
-            disabled = (st.session_state.remaining_points < points) and not st.session_state.selected_options[unique_key]
+            disabled = (max_range == 0)
 
             # Display the checkbox and immediately update the session state based on the checkbox value
             selected = st.checkbox(
@@ -222,7 +222,7 @@ if st.button("Submit"):
         "Total Points": st.session_state.total_points,
         "Remaining Points": st.session_state.remaining_points,
         "Selected Options": "; ".join([f"{option} (UID: {options[option]['uid']})" for option in selected_options]),
-        "UID": ", ".join(selected_uids),
+        "UID": submission_uid,
         "Selected Months": " | ".join([f"{key.split('_')[1]}: {' - '.join(months)}" for key, months in selected_months_data.items()]),
         "Submission Date": submission_date
     }
