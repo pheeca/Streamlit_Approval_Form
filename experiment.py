@@ -205,7 +205,7 @@ if st.button("Submit"):
 
     # Collect selected months data
     selected_months_data = {
-        key: " - ".join(months) for key, months in st.session_state.items() if months and key.endswith("_months")
+        key: months for key, months in st.session_state.items() if months and key.endswith("_months")
     }
 
     # Add current date and time to the data
@@ -214,24 +214,19 @@ if st.button("Submit"):
     # Generate a random UID for the submission
     submission_uid = generate_random_uid()
 
-    # Prepare data to store in Google Sheets
-    data = {
-        "Name": name,
-        "Company": company,
-        "Email": email,
-        "Total Points": st.session_state.total_points,
-        "Remaining Points": st.session_state.remaining_points,
-        "Selected Options": "; ".join([f"{option} (UID: {options[option]['uid']})" for option in selected_options]),
-        "UID": submission_uid,
-        "Selected Months": " | ".join([f"{key.split('_')[1]}: {' - '.join(months)}" for key, months in selected_months_data.items()]),
-        "Submission Date": submission_date
-    }
+    # Prepare the row data
+    row = [
+        submission_uid, name, company, email, st.session_state.total_points, st.session_state.remaining_points
+    ]
 
-    # Store data in 'raw' tab of the Google Sheet
-    sheet.worksheet("Submitted").append_row([
-        submission_uid, name, company, email, st.session_state.total_points, st.session_state.remaining_points,
-        *([data.get(f"{section} - {option} - {submission_date}", "") for section, section_options in event_sections.items() for option in section_options])
-    ])
+    # Add data for each event and sponsorship type
+    for section, section_options in event_sections.items():
+        for option in section_options:
+            key = f"{section} - {option}"
+            row.append(data.get(key, ""))
+
+    # Store data in 'Submitted' tab of the Google Sheet
+    sheet.worksheet("Submitted").append_row(row)
 
     # Update Max value in Config sheet based on selected UIDs
     config_worksheet = sheet.worksheet("Config")
