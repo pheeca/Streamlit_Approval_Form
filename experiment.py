@@ -2,6 +2,8 @@ import streamlit as st
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
+import random
+import string
 
 # Load the TOML configuration from Streamlit secrets
 secret_config = st.secrets["google_sheets"]
@@ -192,6 +194,10 @@ if st.session_state.total_points > 0:
     st.sidebar.write(f"**Total Points Allotted:** {st.session_state.total_points}")
     st.sidebar.write(f"### Remaining Points: {st.session_state.remaining_points}")
 
+# Function to generate a random UID for each submission
+def generate_random_uid():
+    return "UID-" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+
 # Submit button
 if st.button("Submit"):
     selected_options = [key.split("_")[1] for key, selected in st.session_state.selected_options.items() if selected]
@@ -199,49 +205,61 @@ if st.button("Submit"):
 
     # Collect selected months data
     selected_months_data = {
-        key: ", ".join(months) for key, months in st.session_state.items() if months and key.endswith("_months")
+        key: " - ".join(months) for key, months in st.session_state.items() if months and key.endswith("_months")
     }
 
     # Add current date and time to the data
     submission_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # Prepare data to store in Google Sheets for raw data
-    raw_data = [
-        ", ".join(selected_uids), name, company, email,
-        st.session_state.total_points, st.session_state.remaining_points
+    # Generate a random UID for the submission
+    submission_uid = generate_random_uid()
+
+    # Prepare data to store in Google Sheets
+    data = {
+        "Name": name,
+        "Company": company,
+        "Email": email,
+        "Total Points": st.session_state.total_points,
+        "Remaining Points": st.session_state.remaining_points,
+        "Selected Options": "; ".join([f"{option} (UID: {options[option]['uid']})" for option in selected_options]),
+        "UID": ", ".join(selected_uids),
+        "Selected Months": " | ".join([f"{key.split('_')[1]}: {' - '.join(months)}" for key, months in selected_months_data.items()]),
+        "Submission Date": submission_date
+    }
+
+    # Store data in 'raw info' sheet
+    sheet.worksheet("raw info").append_row([
+        data["Name"], data["Company"], data["Email"], data["Total Points"],
+        data["Remaining Points"], data["Selected Options"], data["UID"], data["Selected Months"], data["Submission Date"]
+    ])
+
+    # Store data in 'Submitted' sheet
+    submission_data = [
+        submission_uid, data["Name"], data["Company"], data["Email"],
+        data["Total Points"], data["Remaining Points"]
     ]
 
-    # Fetch the 'Submitted' sheet for raw data
-    try:
-        submitted_worksheet = sheet.worksheet("Submitted")
-        submitted_worksheet.append_row(raw_data)
+    # Dynamically add columns for each selected option with the formatted event and sponsorship details
+    for section, section_options in event_sections.items():
+        for option in section_options:
+            col_value = ""
+            if option in selected_options:
+                col_value = f"{section} - {option} - {submission_date}"
+            submission_data.append(col_value)
 
-        # Update Max value in Config sheet based on selected UIDs
-        config_worksheet = sheet.worksheet("Config")
-        config_data = config_worksheet.get_all_records()
+    sheet.worksheet("Submitted").append_row(submission_data)
 
-        # Dynamically create columns for event sponsorships and store "Yes"
-        headers = submitted_worksheet.row_values(1)
-        for option in selected_options:
-            column_name = f"{section}_{option}"  # Adjust based on your column naming scheme
-            if column_name not in headers:
-                submitted_worksheet.add_cols(1)
-                col_index = len(headers) + 1
-                submitted_worksheet.update_cell(1, col_index, column_name)
-            else:
-                col_index = headers.index(column_name) + 1
-            # Mark the selected option as "Yes" in the appropriate column
-            submitted_worksheet.update_cell(submitted_worksheet.row_count, col_index, "Yes")
-    except gspread.exceptions.APIError as e:
-        st.error(f"Google Sheets API error: {e}")
-        st.stop()
-    except Exception as e:
-        st.error(f"An error occurred: {e}")
-        st.stop()
+    # Update Max value in Config sheet based on selected UIDs
+    config_worksheet = sheet.worksheet("Config")
+    config_data = config_worksheet.get_all_records()
 
-    # Reset form inputs by clearing session state values
-    st.session_state.selected_options = {}
-    st.session_state.selected_months = {}
-    st.session_state.total_points = 0
-    st.session_state.remaining_points = 0
+    for i, entry in enumerate(config_data):
+        if entry['UID'] in selected_uids:
+            try:
+                max_value = int(entry['Max'])
+                new_max = max_value - 1
+                config_worksheet.update_cell(i + 2, config_worksheet.find('Max').col, new_max)
+            except ValueError:
+                pass
+
     st.success("Form submitted successfully!")
