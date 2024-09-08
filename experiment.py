@@ -205,7 +205,7 @@ if st.button("Submit"):
 
     # Collect selected months data
     selected_months_data = {
-        key: months for key, months in st.session_state.items() if months and key.endswith("_months")
+        key: st.session_state.get(key, []) for key in st.session_state if key.endswith("_months")
     }
 
     # Add current date and time to the data
@@ -214,16 +214,19 @@ if st.button("Submit"):
     # Generate a random UID for the submission
     submission_uid = generate_random_uid()
 
-    # Prepare the row data
+    # Prepare data to store in Google Sheets
     row = [
         submission_uid, name, company, email, st.session_state.total_points, st.session_state.remaining_points
     ]
 
-    # Add data for each event and sponsorship type
+    # Prepare the row data for each event and sponsorship type
     for section, section_options in event_sections.items():
         for option in section_options:
             key = f"{section} - {option}"
-            row.append(data.get(key, ""))
+            if key in st.session_state.selected_options and st.session_state.selected_options[key]:
+                row.append("Yes")
+            else:
+                row.append("")
 
     # Store data in 'Submitted' tab of the Google Sheet
     sheet.worksheet("Submitted").append_row(row)
