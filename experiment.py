@@ -205,7 +205,7 @@ if st.button("Submit"):
 
     # Collect selected months data
     selected_months_data = {
-        key: st.session_state.get(key, []) for key in st.session_state if key.endswith("_months")
+        key: " - ".join(months) for key, months in st.session_state.items() if months and key.endswith("_months")
     }
 
     # Add current date and time to the data
@@ -215,21 +215,39 @@ if st.button("Submit"):
     submission_uid = generate_random_uid()
 
     # Prepare data to store in Google Sheets
-    row = [
-        submission_uid, name, company, email, st.session_state.total_points, st.session_state.remaining_points
+    data = {
+        "Name": name,
+        "Company": company,
+        "Email": email,
+        "Total Points": st.session_state.total_points,
+        "Remaining Points": st.session_state.remaining_points,
+        "Selected Options": "; ".join([f"{option} (UID: {options[option]['uid']})" for option in selected_options]),
+        "UID": submission_uid,
+        "Selected Months": " | ".join([f"{key.split('_')[1]}: {' - '.join(months)}" for key, months in selected_months_data.items()]),
+        "Submission Date": submission_date
+    }
+
+    # Store data in 'raw info' sheet
+    sheet.worksheet("raw info").append_row([
+        data["Name"], data["Company"], data["Email"], data["Total Points"],
+        data["Remaining Points"], data["Selected Options"], data["UID"], data["Selected Months"], data["Submission Date"]
+    ])
+
+    # Store data in 'Submitted' sheet
+    submission_data = [
+        submission_uid, data["Name"], data["Company"], data["Email"],
+        data["Total Points"], data["Remaining Points"]
     ]
 
-    # Prepare the row data for each event and sponsorship type
+    # Dynamically add columns for each selected option with the formatted event and sponsorship details
     for section, section_options in event_sections.items():
         for option in section_options:
-            key = f"{section} - {option}"
-            if key in st.session_state.selected_options and st.session_state.selected_options[key]:
-                row.append("Yes")
-            else:
-                row.append("")
+            col_value = ""
+            if option in selected_options:
+                col_value = f"{section} - {option} - {submission_date}"
+            submission_data.append(col_value)
 
-    # Store data in 'Submitted' tab of the Google Sheet
-    sheet.worksheet("Submitted").append_row(row)
+    sheet.worksheet("Submitted").append_row(submission_data)
 
     # Update Max value in Config sheet based on selected UIDs
     config_worksheet = sheet.worksheet("Config")
