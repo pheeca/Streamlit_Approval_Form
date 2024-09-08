@@ -227,27 +227,11 @@ if st.button("Submit"):
         "Submission Date": submission_date
     }
 
-    # Store data in 'raw info' sheet
-    sheet.worksheet("raw info").append_row([
-        data["Name"], data["Company"], data["Email"], data["Total Points"],
-        data["Remaining Points"], data["Selected Options"], data["UID"], data["Selected Months"], data["Submission Date"]
+    # Store data in 'raw' tab of the Google Sheet
+    sheet.worksheet("Submitted").append_row([
+        submission_uid, name, company, email, st.session_state.total_points, st.session_state.remaining_points,
+        *([data.get(f"{section} - {option} - {submission_date}", "") for section, section_options in event_sections.items() for option in section_options])
     ])
-
-    # Store data in 'Submitted' sheet
-    submission_data = [
-        submission_uid, data["Name"], data["Company"], data["Email"],
-        data["Total Points"], data["Remaining Points"]
-    ]
-
-    # Dynamically add columns for each selected option with the formatted event and sponsorship details
-    for section, section_options in event_sections.items():
-        for option in section_options:
-            col_value = ""
-            if option in selected_options:
-                col_value = f"{section} - {option} - {submission_date}"
-            submission_data.append(col_value)
-
-    sheet.worksheet("Submitted").append_row(submission_data)
 
     # Update Max value in Config sheet based on selected UIDs
     config_worksheet = sheet.worksheet("Config")
