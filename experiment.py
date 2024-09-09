@@ -4,12 +4,12 @@ from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 import random
 import string
-
+import toml
 # Load the TOML configuration from Streamlit secrets
 secret_config = st.secrets["google_sheets"]
-
 # Extract service account information
 try:
+    
     service_account_info = {
         "type": secret_config["type"],
         "project_id": secret_config["project_id"],
@@ -32,7 +32,7 @@ creds = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, s
 client = gspread.authorize(creds)
 sheet_id = "16Ln8V-XTaSKDm1ycu5CNUkki-x2STgVvPHxSnOPKOwM"  # Replace with your actual Google Sheet ID
 sheet = client.open_by_key(sheet_id)
-
+#sheet.batch_update
 # Fetching options and descriptions from the sheet
 def fetch_options(sheet, tab_name):
     try:
@@ -160,7 +160,7 @@ for section, section_options in event_sections.items():
 
             # Display the checkbox and immediately update the session state based on the checkbox value
             selected = st.checkbox(
-                f"**{option}** - Points: {points}, Max: {max_range}",
+                f"*{option}* - Points: {points}, Max: {max_range}",
                 value=st.session_state.selected_options[unique_key],
                 key=unique_key,
                 disabled=disabled
@@ -188,10 +188,10 @@ update_remaining_points()
 # Display remaining points in the sidebar only when total_points > 0
 if st.session_state.total_points > 0:
     st.sidebar.title("Submission Details")
-    st.sidebar.write(f"**Name:** {name}")
-    st.sidebar.write(f"**Email:** {email}")
-    st.sidebar.write(f"**Company:** {company}")
-    st.sidebar.write(f"**Total Points Allotted:** {st.session_state.total_points}")
+    st.sidebar.write(f"*Name:* {name}")
+    st.sidebar.write(f"*Email:* {email}")
+    st.sidebar.write(f"*Company:* {company}")
+    st.sidebar.write(f"*Total Points Allotted:* {st.session_state.total_points}")
     st.sidebar.write(f"### Remaining Points: {st.session_state.remaining_points}")
 
 # Function to generate a random UID for each submission
@@ -201,6 +201,7 @@ def generate_random_uid():
 # Submit button
 if st.button("Submit"):
     selected_options = [key.split("_")[1] for key, selected in st.session_state.selected_options.items() if selected]
+    selected_options_full = [key for key, selected in st.session_state.selected_options.items() if selected]
     selected_uids = [options[option]['uid'] for option in selected_options]
 
     # Collect selected months data
@@ -222,8 +223,9 @@ if st.button("Submit"):
         "Total Points": st.session_state.total_points,
         "Remaining Points": st.session_state.remaining_points,
         "Selected Options": "; ".join([f"{option} (UID: {options[option]['uid']})" for option in selected_options]),
-        "UID": submission_uid,
-        "Selected Months": " | ".join([f"{key.split('_')[1]}: {' - '.join(months)}" for key, months in selected_months_data.items()]),
+        "UID": ", ".join([f" {options[option]['uid']}" for option in selected_options]),
+        "CustomerUID": submission_uid,
+        "Selected Months": " | ".join([f"{key.split('_')[1]}: {months}" for key, months in selected_months_data.items()]),
         "Submission Date": submission_date
     }
 
@@ -243,8 +245,21 @@ if st.button("Submit"):
     for section, section_options in event_sections.items():
         for option in section_options:
             col_value = ""
-            if option in selected_options:
-                col_value = f"{section} - {option} - {submission_date}"
+            print(section+"_"+option,selected_options_full)
+            #bas check karna hai that option of same type isnt seleceted 
+            if section+"_"+option in selected_options_full:
+                
+                col_value = "YES"
+                #print(selected_months_data.items(),section,option,32)
+                month_current=  [months for key, months in selected_months_data.items() if key==section+"_"+option+"_months"]
+                
+                if len(month_current)>0:
+                    print(month_current,section,option,33)
+                    col_value+=month_current[0]
+
+                    
+            else:
+                col_value="NO"    
             submission_data.append(col_value)
 
     sheet.worksheet("Submitted").append_row(submission_data)
