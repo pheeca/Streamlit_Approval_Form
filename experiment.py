@@ -156,7 +156,7 @@ for section, section_options in event_sections.items():
                 st.session_state.selected_options[unique_key] = False
 
             # Determine if the checkbox should be disabled
-            disabled = (max_range == 0)or (st.session_state.remaining_points < points)
+            disabled = ((max_range == 0)or (st.session_state.remaining_points < points))and (max_range.lower()!="n/a")
 
             # Display the checkbox and immediately update the session state based on the checkbox value
             selected = st.checkbox(
@@ -232,7 +232,7 @@ if st.button("Submit"):
     # Store data in 'raw info' sheet
     sheet.worksheet("raw info").append_row([
         data["Name"], data["Company"], data["Email"], data["Total Points"],
-        data["Remaining Points"], data["Selected Options"], data["UID"], data["Selected Months"], data["Submission Date"]
+        data["Remaining Points"], data["Selected Options"], data["UID"],submission_uid, data["Selected Months"], data["Submission Date"]
     ])
 
     # Store data in 'Submitted' sheet
