@@ -156,7 +156,7 @@ for section, section_options in event_sections.items():
                 st.session_state.selected_options[unique_key] = False
 
             # Determine if the checkbox should be disabled
-            disabled = ((max_range == 0)or (st.session_state.remaining_points < points))and (max_range.lower()!="n/a")
+            disabled = ((max_range == 0)or (st.session_state.remaining_points < points))and (str(max_range.lower()!="n/a"))
 
             # Display the checkbox and immediately update the session state based on the checkbox value
             selected = st.checkbox(
