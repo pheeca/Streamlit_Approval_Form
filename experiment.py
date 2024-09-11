@@ -6,10 +6,11 @@ import random
 import string
 import toml
 # Load the TOML configuration from Streamlit secrets
+#g_secret_config = toml.load("secret.toml")
 secret_config = st.secrets["google_sheets"]
 # Extract service account information
 try:
-    
+    #secret_config=g_secret_config['google_sheets']
     service_account_info = {
         "type": secret_config["type"],
         "project_id": secret_config["project_id"],
@@ -59,7 +60,7 @@ for entry in options_data:
     except ValueError:
         points = 0
     try:
-       if entry['Max'].lower() == "n/a":
+       if str(entry['Max']).lower() == "n/a":
            max_range = "n/a"
        else:
            max_range = int(entry['Max'])
