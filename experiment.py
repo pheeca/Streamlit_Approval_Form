@@ -59,9 +59,12 @@ for entry in options_data:
     except ValueError:
         points = 0
     try:
+    if entry['Max'].lower() == "n/a":
+        max_range = "n/a"
+    else:
         max_range = int(entry['Max'])
     except ValueError:
-        max_range = 0
+    max_range = 0
     try:
         max_month_selection = int(entry.get('Max Month Selection', 0))
     except ValueError:
