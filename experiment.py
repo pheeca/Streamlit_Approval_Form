@@ -10,7 +10,7 @@ import toml
 secret_config = st.secrets["google_sheets"]
 # Extract service account information
 try:
-    #secret_config=g_secret_config['google_sheets']
+#    secret_config=g_secret_config['google_sheets']
     service_account_info = {
         "type": secret_config["type"],
         "project_id": secret_config["project_id"],
@@ -160,7 +160,7 @@ for section, section_options in event_sections.items():
                 st.session_state.selected_options[unique_key] = False
 
             # Determine if the checkbox should be disabled
-            disabled = ((max_range == 0)or (st.session_state.remaining_points < points))and ((str(max_range).lower()!="n/a"))
+            disabled = ((max_range == 0)and ((str(max_range).lower()!="n/a"))or (st.session_state.remaining_points < points))
 
             # Display the checkbox and immediately update the session state based on the checkbox value
             selected = st.checkbox(
