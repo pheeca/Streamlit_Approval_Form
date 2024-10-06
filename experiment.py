@@ -5,12 +5,16 @@ from datetime import datetime
 import random
 import string
 import toml
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 # Load the TOML configuration from Streamlit secrets
 #g_secret_config = toml.load("secret.toml")
 secret_config = st.secrets["google_sheets"]
 # Extract service account information
 try:
-#    secret_config=g_secret_config['google_sheets']
+    #secret_config = g_secret_config['google_sheets']
     service_account_info = {
         "type": secret_config["type"],
         "project_id": secret_config["project_id"],
@@ -33,8 +37,29 @@ creds = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, s
 client = gspread.authorize(creds)
 sheet_id = "16Ln8V-XTaSKDm1ycu5CNUkki-x2STgVvPHxSnOPKOwM"  # Replace with your actual Google Sheet ID
 sheet = client.open_by_key(sheet_id)
-#sheet.batch_update
-# Fetching options and descriptions from the sheet
+
+def send_email(sender_email, sender_password, recipient_email, subject, body):
+    try:
+        # Create a MIME object
+        message = MIMEMultipart()
+        message['From'] = sender_email
+        message['To'] = recipient_email
+        message['Subject'] = subject
+
+        # Attach the body to the message
+        message.attach(MIMEText(body, 'plain'))
+
+        # Establish a secure session with Gmail's outgoing SMTP server
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()  # Secure the connection
+            server.login(sender_email, sender_password)  # Log in with app password
+            text = message.as_string()
+            server.sendmail(sender_email, recipient_email, text)  # Send the email
+            print("Email sent successfully!")
+    
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
 def fetch_options(sheet, tab_name):
     try:
         worksheet = sheet.worksheet(tab_name)
@@ -60,12 +85,12 @@ for entry in options_data:
     except ValueError:
         points = 0
     try:
-       if str(entry['Max']).lower() == "n/a":
-           max_range = "n/a"
-       else:
-           max_range = int(entry['Max'])
+        if str(entry['Max']).lower() == "n/a":
+            max_range = "n/a"
+        else:
+            max_range = int(entry['Max'])
     except ValueError:
-       max_range = 0
+        max_range = 0
     try:
         max_month_selection = int(entry.get('Max Month Selection', 0))
     except ValueError:
@@ -89,33 +114,63 @@ for entry in sections_data:
         event_sections[section] = []
     event_sections[section].append(option)
 
-# Function to handle months selection and session state update
+# Function to handle months selection without modifying session_state directly
 def handle_month_selection(unique_key, max_months, available_months):
     selected_months_key = f"{unique_key}_months"
-    
+
+    # Initialize the selected months in session state if not present
     if selected_months_key not in st.session_state:
         st.session_state[selected_months_key] = []
 
+    # Create the multiselect widget
     selected_months = st.multiselect(
-        f"Select up to {max_months} months",
+        f"Select the months you choose to sponsor for {unique_key}",
         available_months,
         default=st.session_state[selected_months_key],
-        max_selections=max_months
+        key=selected_months_key
     )
 
-    st.session_state[selected_months_key] = selected_months
+    # Enforce maximum selection by Streamlit (not manually)
+    if len(selected_months) > max_months:
+        st.warning(f"You can select up to {max_months} months.")
+        # Trim the selection to max_months
+        selected_months = selected_months[:max_months]
+        # Update the session state accordingly
+        st.session_state[selected_months_key] = selected_months
+
+    # No direct modification of st.session_state.remaining_points here
+    # Points deduction will be handled separately
+
+# Function to calculate remaining points
+def calculate_remaining_points():
+    deducted_points = 0
+    for key, selected in st.session_state.selected_options.items():
+        if selected:
+            deducted_points += options[key.split("_")[1]]['points']
+            # Check if this option has associated months
+            months_key = f"{key}_months"
+            if months_key in st.session_state:
+                deducted_points += len(st.session_state[months_key]) * 3  # Deduct 3 points per selected month
+    st.session_state.remaining_points = st.session_state.total_points - deducted_points
 
 # Streamlit form
 st.image("logo.jpg", width=200)
 st.title("Westchester Chamber Alliance Sponsorship")
 
-# Basic information inputs
-name = st.text_input("Name")
-company = st.text_input("Company")
-email = st.text_input("Email")
+# Basic information inputs with clear labels
+company = st.text_input("Organization Name", help="Enter your organization's name.")
+contact_name = st.text_input("Your Name", help="Who should be our regular contact when we need names for events, marketing materials, etc.")
+email = st.text_input("Email", help="Enter a valid email address.")
+phone_number = st.text_input('Phone Number', help="Enter your contact number.")
 
 # Total points input
-total_points = st.number_input("Enter Total Points Allotted", min_value=0, value=0)
+total_points = st.number_input(
+    "SSP Points (Please use the number in the email)",
+    min_value=0,
+    max_value=100,
+    value=0,
+    help="Please enter a value between 0 and 100."
+)
 
 # Initialize session state for total_points and remaining_points
 if 'total_points' not in st.session_state or st.session_state.total_points != total_points:
@@ -127,18 +182,6 @@ if 'selected_options' not in st.session_state:
     st.session_state.selected_options = {}
 if 'selected_months' not in st.session_state:
     st.session_state.selected_months = {}
-
-# Function to update remaining points
-def update_remaining_points():
-    deducted_points = sum(
-        options[option_key.split("_")[1]]['points']
-        for option_key, selected in st.session_state.selected_options.items()
-        if selected
-    )
-    st.session_state.remaining_points = st.session_state.total_points - deducted_points
-
-# Pre-calculate remaining points before rendering the UI
-update_remaining_points()
 
 # Displaying sections and options
 for section, section_options in event_sections.items():
@@ -160,11 +203,25 @@ for section, section_options in event_sections.items():
                 st.session_state.selected_options[unique_key] = False
 
             # Determine if the checkbox should be disabled
-            disabled = ((max_range == 0)and ((str(max_range).lower()!="n/a"))or (st.session_state.remaining_points < points))
+            disabled = False
+            # Check for max constraints
+            if isinstance(max_range, int) and max_range != 0:
+                current_selection_count = sum(
+                    1 for key, selected in st.session_state.selected_options.items()
+                    if selected and key.startswith(section)
+                )
+                if current_selection_count >= max_range and not st.session_state.selected_options[unique_key]:
+                    disabled = True
 
             # Display the checkbox and immediately update the session state based on the checkbox value
+            if "Luncheon" in option:
+                # Modify the label for Luncheon sponsors
+                checkbox_label = f"**{option}** - Points: {points} (Up to 3 sponsors per month)"
+            else:
+                checkbox_label = f"**{option}** - Points: {points}, Max: {max_range}"
+
             selected = st.checkbox(
-                f"**{option}** - Points: {points}, Max: {max_range}",
+                checkbox_label,
                 value=st.session_state.selected_options[unique_key],
                 key=unique_key,
                 disabled=disabled
@@ -173,7 +230,7 @@ for section, section_options in event_sections.items():
             # Update session state based on the checkbox selection
             if selected != st.session_state.selected_options[unique_key]:
                 st.session_state.selected_options[unique_key] = selected
-                update_remaining_points()
+                calculate_remaining_points()
 
             # Show the dropdown for months if the option is selected and it's a Luncheons option
             if st.session_state.selected_options[unique_key] and "Luncheon" in option:
@@ -186,15 +243,15 @@ for section, section_options in event_sections.items():
 
     st.write("---")
 
-# Update remaining points again after rendering options
-update_remaining_points()
+# Calculate remaining points after all selections
+calculate_remaining_points()
 
 # Display remaining points in the sidebar only when total_points > 0
 if st.session_state.total_points > 0:
     st.sidebar.title("Submission Details")
-    st.sidebar.write(f"**Name:** {name}")
+    st.sidebar.write(f"**Name:** {contact_name}")
     st.sidebar.write(f"**Email:** {email}")
-    st.sidebar.write(f"**Company:** {company}")
+    st.sidebar.write(f"**Organization:** {company}")
     st.sidebar.write(f"**Total Points Allotted:** {st.session_state.total_points}")
     st.sidebar.write(f"### Remaining Points: {st.session_state.remaining_points}")
 
@@ -221,9 +278,10 @@ if st.button("Submit"):
 
     # Prepare data to store in Google Sheets
     data = {
-        "Name": name,
+        "Name": contact_name,
         "Company": company,
         "Email": email,
+        "phoneNumber":phone_number,
         "Total Points": st.session_state.total_points,
         "Remaining Points": st.session_state.remaining_points,
         "Selected Options": "; ".join([f"{option} (UID: {options[option]['uid']})" for option in selected_options]),
@@ -235,36 +293,59 @@ if st.button("Submit"):
 
     # Store data in 'raw info' sheet
     sheet.worksheet("raw info").append_row([
-        data["Name"], data["Company"], data["Email"], data["Total Points"],
-        data["Remaining Points"], data["Selected Options"], data["UID"],submission_uid, data["Selected Months"], data["Submission Date"]
+        data["Name"], data["Company"], data["Email"],data["phoneNumber"], data["Total Points"],
+        data["Remaining Points"], data["Selected Options"], data["UID"], submission_uid, data["Selected Months"], data["Submission Date"]
     ])
 
     # Store data in 'Submitted' sheet
     submission_data = [
-        submission_uid, data["Name"], data["Company"], data["Email"],
+        submission_uid, data["Name"], data["Company"], data["Email"],data["phoneNumber"],
         data["Total Points"], data["Remaining Points"]
     ]
 
     # Dynamically add columns for each selected option with the formatted event and sponsorship details
     for section, section_options in event_sections.items():
         for option in section_options:
+            computed_column = f"{section} - {option}"
+            unique_key = f"{section}_{option}"
             col_value = ""
-            print(section+"_"+option,selected_options_full)
-            #bas check karna hai that option of same type isnt seleceted 
-            if section+"_"+option in selected_options_full:
-                
+            if unique_key in selected_options_full:
                 col_value = "YES"
-                #print(selected_months_data.items(),section,option,32)
-                month_current=  [months for key, months in selected_months_data.items() if key==section+"_"+option+"_months"]
-                
-                if len(month_current)>0:
-                    print(month_current,section,option,33)
-                    col_value+=month_current[0]
-
-                    
+                # Append selected months if applicable
+                selected_months = st.session_state.get(f"{unique_key}_months", [])
+                if selected_months:
+                    col_value += " (" + ", ".join(selected_months) + ")"
             else:
-                col_value="NO"    
+                col_value = "NO"
             submission_data.append(col_value)
+
+    # Fetch email credentials from Streamlit secrets for security
+   # sender_email = st.secrets["email"]["sender"]
+    #app_password = st.secrets["email"]["app_password"]
+    sender_email=""
+    app_password=""
+    recipient_email = email
+    subject = "Form Submitted Successfully"
+    body = f"""
+UID: {submission_uid}
+Name: {contact_name}
+Company: {company}
+Email: {email}
+Total Points: {st.session_state.total_points}
+Remaining Points: {st.session_state.remaining_points}
+
+Selected Options:
+{", ".join(selected_options)}
+
+Selected Months:
+{", ".join([f"{key.split('_')[1]}: {months}" for key, months in selected_months_data.items()])}
+
+Submission Date: {submission_date}
+"""
+
+    money = False  # Set to True if you want to enable email sending
+    if money:
+        send_email(sender_email, app_password, recipient_email, subject, body)
 
     sheet.worksheet("Submitted").append_row(submission_data)
 
@@ -275,9 +356,9 @@ if st.button("Submit"):
     for i, entry in enumerate(config_data):
         if entry['UID'] in selected_uids:
             try:
-                max_value = int(entry['Max'])
-                new_max = max_value - 1
-                config_worksheet.update_cell(i + 2, config_worksheet.find('Max').col, new_max)
+                if isinstance(entry['Max'], int):
+                    new_max = entry['Max'] - 1
+                    config_worksheet.update_cell(i + 2, config_worksheet.find('Max').col, new_max)
             except ValueError:
                 pass
 
