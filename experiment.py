@@ -10,8 +10,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 # Load the TOML configuration from Streamlit secrets
-#g_secret_config = toml.load("secret.toml")
 secret_config = st.secrets["google_sheets"]
+#g_secret_config = toml.load("secret.toml")
 # Extract service account information
 try:
     #secret_config = g_secret_config['google_sheets']
@@ -146,7 +146,8 @@ def calculate_remaining_points():
     deducted_points = 0
     for key, selected in st.session_state.selected_options.items():
         if selected:
-            deducted_points += options[key.split("_")[1]]['points']
+            option_name = key.split("_")[1]
+            deducted_points += options[option_name]['points']
             # Check if this option has associated months
             months_key = f"{key}_months"
             if months_key in st.session_state:
@@ -183,6 +184,9 @@ if 'selected_options' not in st.session_state:
 if 'selected_months' not in st.session_state:
     st.session_state.selected_months = {}
 
+# **New:** Calculate remaining points before rendering options
+calculate_remaining_points()
+
 # Displaying sections and options
 for section, section_options in event_sections.items():
     st.subheader(section)
@@ -204,7 +208,8 @@ for section, section_options in event_sections.items():
 
             # Determine if the checkbox should be disabled
             disabled = False
-            # Check for max constraints
+
+            # Check for max selection constraints
             if isinstance(max_range, int) and max_range != 0:
                 current_selection_count = sum(
                     1 for key, selected in st.session_state.selected_options.items()
@@ -212,6 +217,10 @@ for section, section_options in event_sections.items():
                 )
                 if current_selection_count >= max_range and not st.session_state.selected_options[unique_key]:
                     disabled = True
+
+            # **New Logic:** Disable if selecting this option would exceed remaining points
+            if not st.session_state.selected_options[unique_key] and points > st.session_state.remaining_points:
+                disabled = True
 
             # Display the checkbox and immediately update the session state based on the checkbox value
             if "Luncheon" in option:
@@ -243,8 +252,8 @@ for section, section_options in event_sections.items():
 
     st.write("---")
 
-# Calculate remaining points after all selections
-calculate_remaining_points()
+# **Removed:** Existing call to calculate_remaining_points() after the loop
+# calculate_remaining_points()
 
 # Display remaining points in the sidebar only when total_points > 0
 if st.session_state.total_points > 0:
@@ -281,7 +290,7 @@ if st.button("Submit"):
         "Name": contact_name,
         "Company": company,
         "Email": email,
-        "phoneNumber":phone_number,
+        "phoneNumber": phone_number,
         "Total Points": st.session_state.total_points,
         "Remaining Points": st.session_state.remaining_points,
         "Selected Options": "; ".join([f"{option} (UID: {options[option]['uid']})" for option in selected_options]),
@@ -293,13 +302,13 @@ if st.button("Submit"):
 
     # Store data in 'raw info' sheet
     sheet.worksheet("raw info").append_row([
-        data["Name"], data["Company"], data["Email"],data["phoneNumber"], data["Total Points"],
+        data["Name"], data["Company"], data["Email"], data["phoneNumber"], data["Total Points"],
         data["Remaining Points"], data["Selected Options"], data["UID"], submission_uid, data["Selected Months"], data["Submission Date"]
     ])
 
     # Store data in 'Submitted' sheet
     submission_data = [
-        submission_uid, data["Name"], data["Company"], data["Email"],data["phoneNumber"],
+        submission_uid, data["Name"], data["Company"], data["Email"], data["phoneNumber"],
         data["Total Points"], data["Remaining Points"]
     ]
 
@@ -320,10 +329,10 @@ if st.button("Submit"):
             submission_data.append(col_value)
 
     # Fetch email credentials from Streamlit secrets for security
-   # sender_email = st.secrets["email"]["sender"]
-    #app_password = st.secrets["email"]["app_password"]
-    sender_email=""
-    app_password=""
+    # sender_email = st.secrets["email"]["sender"]
+    # app_password = st.secrets["email"]["app_password"]
+    sender_email = ""
+    app_password = ""
     recipient_email = email
     subject = "Form Submitted Successfully"
     body = f"""
