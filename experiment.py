@@ -125,25 +125,45 @@ def handle_month_selection(unique_key, max_months, available_months):
     # Initialize the selected months in session state if not present
     if selected_months_key not in st.session_state:
         st.session_state[selected_months_key] = []
-
+    ulabel=unique_key.replace("_"," ")
     # Create the multiselect widget
     selected_months = st.multiselect(
-        f"Select the months you choose to sponsor for {unique_key}",
+        f"Select the months you choose to sponsor for {ulabel}",
         available_months,
-        default=st.session_state[selected_months_key],
-        key=selected_months_key
+        st.session_state[selected_months_key],
+        key=selected_months_key,
+        max_selections=max_months
     )
 
     # Enforce maximum selection by Streamlit (not manually)
-    if len(selected_months) > max_months:
-        st.warning(f"You can select up to {max_months} months.")
-        # Trim the selection to max_months
-        selected_months = selected_months[:max_months]
-        # Update the session state accordingly
-        st.session_state[selected_months_key] = selected_months
+    #if len(selected_months) > max_months:
+    #    st.warning(f"You can select up to {max_months} months.")
+    #    # Trim the selection to max_months
+    #    selected_months = selected_months[:max_months]
+    #    # Update the session state accordingly
+    #    st.session_state[selected_months_key] = selected_months
 
     # No direct modification of st.session_state.remaining_points here
     # Points deduction will be handled separately
+
+# Function to handle months selection without modifying session_state directly
+def handle_month_selection2(unique_key,  available_months):
+    max_months=1
+    selected_months_key = f"{unique_key}_months"
+
+    # Initialize the selected months in session state if not present
+    if selected_months_key not in st.session_state:
+        st.session_state[selected_months_key] = []
+    ulabel=unique_key.replace("_"," ")
+    # Create the multiselect widget
+    selected_months = st.multiselect(
+        f"Select the months you choose to sponsor for {ulabel}",
+        available_months,
+        st.session_state[selected_months_key],
+        key=selected_months_key,
+    #    max_selections=max_months
+    )
+
 
 # Function to calculate remaining points
 def calculate_remaining_points():
@@ -152,11 +172,16 @@ def calculate_remaining_points():
         if selected:
             #option_name = key.split("_")[1]
             optionKey=key.replace('_',' - ')
-            deducted_points += options[optionKey]['points']
-            # Check if this option has associated months
             months_key = f"{key}_months"
-            if months_key in st.session_state:
-                deducted_points += len(st.session_state[months_key]) * 3  # Deduct 3 points per selected month
+            multiplier=1
+            if months_key in st.session_state:#options[optionKey]['extra']['Multiples']=='Yes' and 
+                multiplier=len(st.session_state[months_key])
+
+            deducted_points += (options[optionKey]['points']*multiplier)
+            # Check if this option has associated months
+            
+            #if :
+            #    deducted_points += len(st.session_state[months_key]) * 3  # Deduct 3 points per selected month
     st.session_state.remaining_points = st.session_state.total_points - deducted_points
 
 # Streamlit form
@@ -253,11 +278,16 @@ for section, section_options in event_sections.items():
                 calculate_remaining_points()
 
             # Show the dropdown for months if the option is selected and it's a Luncheons option
-            if st.session_state.selected_options[unique_key] and "Luncheon" in option:
+            isSelectedOpt=unique_key in [so for so in st.session_state.selected_options if st.session_state.selected_options[so]]
+            if isSelectedOpt and option_info['max_month_selection']>0 and len([a for a in option_info['computed_months_options'] if a])>0:#and "Luncheon" in option:
                 max_months = option_info['max_month_selection']
                 available_months = option_info['computed_months_options']
                 handle_month_selection(unique_key, max_months, available_months)
-
+            
+            if isSelectedOpt and option_info['extra']['Multiples']=='Yes':
+                available_months = option_info['extra']['Multiple Options'].split(',')
+                handle_month_selection2(unique_key,  available_months)
+            
             # Display the formatted description
             st.markdown(formatted_description)
 
