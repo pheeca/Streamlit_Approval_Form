@@ -11,7 +11,7 @@ from email.mime.text import MIMEText
 
 # Load the TOML configuration from Streamlit secrets
 secret_config = st.secrets["google_sheets"]
-g_secret_config = toml.load("secret.toml")
+#g_secret_config = toml.load("secret.toml")
 # Extract service account information
 try:
     #secret_config = g_secret_config['google_sheets']
