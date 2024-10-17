@@ -186,7 +186,7 @@ def calculate_remaining_points():
 
 # Streamlit form
 st.image("logo.jpg", width=200)
-st.title("West Chester Chamber Alliance Sponsorship")
+st.title("Sustaining Sponsorship Benefits")
 
 # Basic information inputs with clear labels
 company = st.text_input("Organization Name", help="Enter your organization's name.")
