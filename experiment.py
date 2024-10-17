@@ -10,11 +10,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 # Load the TOML configuration from Streamlit secrets
-#secret_config = st.secrets["google_sheets"]
+secret_config = st.secrets["google_sheets"]
 g_secret_config = toml.load("secret.toml")
 # Extract service account information
 try:
-    secret_config = g_secret_config['google_sheets']
+    #secret_config = g_secret_config['google_sheets']
     service_account_info = {
         "type": secret_config["type"],
         "project_id": secret_config["project_id"],
@@ -366,9 +366,6 @@ Selected Months:
 Submission Date: {submission_date}
 """
 
-    money = False  # Set to True if you want to enable email sending
-    if money:
-        send_email(sender_email, app_password, recipient_email, subject, body)
 
     sheet.worksheet("Submitted").append_row(submission_data)
 
