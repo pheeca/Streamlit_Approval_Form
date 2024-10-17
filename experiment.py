@@ -10,11 +10,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 # Load the TOML configuration from Streamlit secrets
-secret_config = st.secrets["google_sheets"]
-#g_secret_config = toml.load("secret.toml")
+#secret_config = st.secrets["google_sheets"]
+g_secret_config = toml.load("secret.toml")
 # Extract service account information
 try:
-    #secret_config = g_secret_config['google_sheets']
+    secret_config = g_secret_config['google_sheets']
     service_account_info = {
         "type": secret_config["type"],
         "project_id": secret_config["project_id"],
@@ -79,7 +79,10 @@ if not options_data or not sections_data:
 # Convert options data into a usable format
 options = {}
 for entry in options_data:
-    option_name = entry['Sponsorship Type']
+    option_name = entry['Computed Column']
+    if entry['Status']!='Ongoing':
+        continue
+
     try:
         points = int(entry['Points'])
     except ValueError:
@@ -102,7 +105,8 @@ for entry in options_data:
         "uid": entry['UID'],
         "description": entry.get('Details', '').split(','),
         "max_month_selection": max_month_selection,
-        "computed_months_options": entry.get('Computed Months Options', '').split(',')
+        "computed_months_options": entry.get('Computed Months Options', '').split(','),
+        'extra':entry
     }
 
 # Convert sections data into a usable format
@@ -146,8 +150,9 @@ def calculate_remaining_points():
     deducted_points = 0
     for key, selected in st.session_state.selected_options.items():
         if selected:
-            option_name = key.split("_")[1]
-            deducted_points += options[option_name]['points']
+            #option_name = key.split("_")[1]
+            optionKey=key.replace('_',' - ')
+            deducted_points += options[optionKey]['points']
             # Check if this option has associated months
             months_key = f"{key}_months"
             if months_key in st.session_state:
@@ -194,9 +199,10 @@ calculate_remaining_points()
 for section, section_options in event_sections.items():
     st.subheader(section)
     for option in section_options:
-        if option in options:
+        optionKey=(section+' - '+option)
+        if  optionKey in options:
             unique_key = f"{section}_{option}"
-            option_info = options[option]
+            option_info = options[optionKey]
             points = option_info['points']
             max_range = option_info['max']
             description = option_info["description"]
@@ -226,11 +232,13 @@ for section, section_options in event_sections.items():
                 disabled = True
 
             # Display the checkbox and immediately update the session state based on the checkbox value
-            if "Luncheon" in option:
+            checkbox_label = f"**{option}** - Points: {points}"
+            if not (not option_info['extra']['Associated Subtitle']):
                 # Modify the label for Luncheon sponsors
-                checkbox_label = f"**{option}** - Points: {points} (Up to 3 sponsors per month)"
-            else:
-                checkbox_label = f"**{option}** - Points: {points}, Max: {max_range}"
+                checkbox_label += f" ({option_info['extra']['Associated Subtitle']})"
+            
+            if max_range!="n/a":
+                checkbox_label += f", Max: {max_range}"
 
             selected = st.checkbox(
                 checkbox_label,
@@ -273,7 +281,7 @@ def generate_random_uid():
 
 # Submit button
 if st.button("Submit"):
-    selected_options = [key.split("_")[1] for key, selected in st.session_state.selected_options.items() if selected]
+    selected_options = [key.replace("_"," - ") for key, selected in st.session_state.selected_options.items() if selected]
     selected_options_full = [key for key, selected in st.session_state.selected_options.items() if selected]
     selected_uids = [options[option]['uid'] for option in selected_options]
 
