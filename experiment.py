@@ -191,6 +191,7 @@ st.title("Sustaining Sponsorship Benefits")
 # Basic information inputs with clear labels
 company = st.text_input("Organization Name", help="Enter your organization's name.")
 contact_name = st.text_input("Your Name", help="Who should be our regular contact when we need names for events, marketing materials, etc.")
+st.caption("Who should be our regular contact when we need names for events, marketing materials, etc.")
 email = st.text_input("Email", help="Enter a valid email address.")
 phone_number = st.text_input('Phone Number', help="Enter your contact number.")
 
@@ -232,7 +233,9 @@ for section, section_options in event_sections.items():
             max_range = option_info['max']
             description = option_info["description"]
             uid = option_info['uid']
-
+            
+            #if "WEBSITE:  2025 - Member Spotlight-Quarterly" in option_info['extra']['Computed Column']:
+            #    ab=2
             # Clean and format the description into bullet points
             formatted_description = "\n".join([f"- {desc.strip()}" for desc in description if desc.strip()])
 
@@ -244,7 +247,7 @@ for section, section_options in event_sections.items():
             disabled = False
 
             # Check for max selection constraints
-            if isinstance(max_range, int) and max_range != 0:
+            if isinstance(max_range, int) :
                 current_selection_count = sum(
                     1 for key, selected in st.session_state.selected_options.items()
                     if selected and key.startswith(section)
@@ -263,7 +266,7 @@ for section, section_options in event_sections.items():
                 checkbox_label += f" ({option_info['extra']['Associated Subtitle']})"
             
             if max_range!="n/a":
-                checkbox_label += f", Max: {max_range}"
+                checkbox_label += f", Max: {option_info['extra']['Default Max']} ({max_range} remaining)"
 
             selected = st.checkbox(
                 checkbox_label,
