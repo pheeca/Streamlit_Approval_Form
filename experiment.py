@@ -8,6 +8,11 @@ import toml
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from streamlit.elements import image
+
+pc=st.set_page_config(page_title="Sustaining Sponsorship Benefits",page_icon= ":clipboard:")#,page_icon= "logo.jpg")
+
+
 
 # Load the TOML configuration from Streamlit secrets
 secret_config = st.secrets["google_sheets"]
@@ -30,6 +35,15 @@ try:
 except KeyError as e:
     st.error(f"Missing key in TOML file: {e}")
     st.stop()
+# Add custom CSS to hide the GitHub icon
+hide_github_icon = """ <style>
+#GithubIcon, .stAppToolbar, [class^=_profileContainer_]  {
+  visibility: hidden;
+}
+ </style>
+"""
+st.markdown(hide_github_icon, unsafe_allow_html=True)
+
 
 # Google Sheets setup
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -188,10 +202,17 @@ def calculate_remaining_points():
 st.image("logo.jpg", width=200)
 st.title("Sustaining Sponsorship Benefits")
 
+
 # Basic information inputs with clear labels
 company = st.text_input("Organization Name", help="Enter your organization's name.")
 contact_name = st.text_input("Your Name", help="Who should be our regular contact when we need names for events, marketing materials, etc.")
 st.caption("Who should be our regular contact when we need names for events, marketing materials, etc.")
+
+line_seperator=st.divider()
+Contact_Name=st.text_input("Contact Name")
+#Contact_Company=st.text_input("Contact Company ")
+#Contact_Email=st.text_input("Contact Email")
+
 email = st.text_input("Email", help="Enter a valid email address.")
 phone_number = st.text_input('Phone Number', help="Enter your contact number.")
 
@@ -203,10 +224,6 @@ total_points = st.number_input(
     value=0,
     help="Please enter a value between 0 and 100."
 )
-line_seperator=st.divider()
-Contact_Name=st.text_input("Contact Name")
-Contact_Company=st.text_input("Contact Company ")
-Contact_Email=st.text_input("Contact Email")
 # Initialize session state for total_points and remaining_points
 if 'total_points' not in st.session_state or st.session_state.total_points != total_points:
     st.session_state.total_points = total_points
@@ -337,8 +354,8 @@ if st.button("Submit"):
         "phoneNumber": phone_number,
         "Total Points": st.session_state.total_points,
         "Contact Name":Contact_Name,
-        "Contact Company":Contact_Company,
-        "Contact Email":Contact_Email,
+       # "Contact Company":Contact_Company,
+       # "Contact Email":Contact_Email,
         "Remaining Points": st.session_state.remaining_points,
         "Selected Options": "; ".join([f"{option} (UID: {options[option]['uid']})" for option in selected_options]),
         "UID": ", ".join([f" {options[option]['uid']}" for option in selected_options]),
@@ -349,14 +366,14 @@ if st.button("Submit"):
 
     # Store data in 'raw info' sheet
     sheet.worksheet("raw info").append_row([
-        data["Name"], data["Company"], data["Email"], data["phoneNumber"], data["Total Points"],
+        data["Name"], data["Company"], data["Email"], data["phoneNumber"], data["Total Points"],data["Contact Name"],
         data["Remaining Points"], data["Selected Options"], data["UID"], submission_uid, data["Selected Months"], data["Submission Date"]
     ])
 
     # Store data in 'Submitted' sheet
     submission_data = [
         submission_uid, data["Name"], data["Company"], data["Email"], data["phoneNumber"],
-        data["Total Points"], data["Remaining Points"],data["Contact Name"],data["Contact Company"],data["Contact Email"]
+        data["Total Points"], data["Remaining Points"],data["Contact Name"],"","",#,data["Contact Company"],data["Contact Email"]
     ]
 
     # Dynamically add columns for each selected option with the formatted event and sponsorship details
