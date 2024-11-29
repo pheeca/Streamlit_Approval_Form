@@ -10,16 +10,19 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from streamlit.elements import image
 
-pc=st.set_page_config(page_title="Sustaining Sponsorship Benefits",page_icon= ":clipboard:")#,page_icon= "logo.jpg")
+companyName='Maison Lejeune'
+Heading="Ouverture de compte pro"
+
+pc=st.set_page_config(page_title=Heading+" - "+companyName,page_icon= "logo.jpg")#,page_icon= ":clipboard:")
 
 
 
 # Load the TOML configuration from Streamlit secrets
-secret_config = st.secrets["google_sheets"]
-#g_secret_config = toml.load("secret.toml")
+#secret_config = st.secrets["google_sheets"]
+g_secret_config = toml.load("secret.toml")
 # Extract service account information
 try:
-    #secret_config = g_secret_config['google_sheets']
+    secret_config = g_secret_config['google_sheets']
     service_account_info = {
         "type": secret_config["type"],
         "project_id": secret_config["project_id"],
@@ -44,7 +47,7 @@ hide_github_icon = """ <style>
 """
 st.markdown(hide_github_icon, unsafe_allow_html=True)
 
-
+    
 # Google Sheets setup
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scope)
@@ -198,17 +201,37 @@ def calculate_remaining_points():
             #    deducted_points += len(st.session_state[months_key]) * 3  # Deduct 3 points per selected month
     st.session_state.remaining_points = st.session_state.total_points - deducted_points
 
+
+
 # Streamlit form
-st.image("logo.jpg", width=200)
-st.title("Sustaining Sponsorship Benefits")
+col1, col2 = st.columns([3,2])  
+with col1:
+    st.title(Heading)
 
+with col2:
+    st.image("logo-white.svg", width=200)
 
+r2col1, r2col2 = st.columns(2)  
 # Basic information inputs with clear labels
-company = st.text_input("Organization Name", help="Enter your organization's name.")
+no_de_compete = r2col1.text_input("N° DE COMPTE", help="Entrez les 6 premiers chiffres de votre numéro de compte.") # Account No
+establissement = r2col1.text_input("ÉTABLISSEMENT", help="Nom de l'établissement bancaire.") # Bank Establishment
+pays = r2col1.text_input("PAYS", help="Pays de résidence.") # country
+
+siret = r2col2.text_input("SIRET", help="Numéro SIRET à 14 chiffres.") # SIRET
+tva_europeen_FR = r2col2.text_input("TVA EUROPEEN : FR", help="Numéro de TVA intracommunautaire (11 chiffres).") # EUROPEAN VAT:Intracommunity VAT number (11 digits)
+r2col2.caption("(pour Union Européenne uniquement)")
+
+line_seperator=st.divider()
+
+r3col1, r3col2 = st.columns(2)  
+#r3col1.
+no_de_compete1 = r3col1.text_input("N° DE COMPTE1", help="Entrez les 6 premiers chiffres de votre numéro de compte.") # Account No
+establissement1 = r3col1.text_input("ÉTABLISSEMENT1", help="Nom de l'établissement bancaire.") # Bank Establishment
+
+
 contact_name = st.text_input("Your Name", help="Who should be our regular contact when we need names for events, marketing materials, etc.")
 st.caption("Who should be our regular contact when we need names for events, marketing materials, etc.")
 
-line_seperator=st.divider()
 Contact_Name=st.text_input("Contact Name")
 #Contact_Company=st.text_input("Contact Company ")
 #Contact_Email=st.text_input("Contact Email")
