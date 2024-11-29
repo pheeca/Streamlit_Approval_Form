@@ -18,11 +18,11 @@ pc=st.set_page_config(page_title=Heading+" - "+companyName,page_icon= "logo.jpg"
 
 
 # Load the TOML configuration from Streamlit secrets
-#secret_config = st.secrets["google_sheets"]
-g_secret_config = toml.load("secret.toml")
+secret_config = st.secrets["google_sheets"]
+#g_secret_config = toml.load("secret.toml")
 # Extract service account information
 try:
-    secret_config = g_secret_config['google_sheets']
+    #secret_config = g_secret_config['google_sheets']
     service_account_info = {
         "type": secret_config["type"],
         "project_id": secret_config["project_id"],
