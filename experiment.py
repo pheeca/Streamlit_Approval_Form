@@ -340,30 +340,3 @@ if st.button("Submit"):
             worksheet.append_row(submission_data)
 
         st.success("Form submitted successfully!")
-
-'''
-
-    # Fetch email credentials from Streamlit secrets for security
-    # sender_email = st.secrets["email"]["sender"]
-    # app_password = st.secrets["email"]["app_password"]
-    sender_email = ""
-    app_password = ""
-    recipient_email = email
-    subject = "Form Submitted Successfully"
-    body = f"""
-UID: {submission_uid}
-Name: {contact_name}
-Company: {company}
-Email: {email}
-Total Points: {st.session_state.total_points}
-Remaining Points: {st.session_state.remaining_points}
-
-Selected Options:
-{", ".join(selected_options)}
-
-Selected Months:
-{", ".join([f"{key.split('_')[1]}: {months}" for key, months in selected_months_data.items()])}
-
-Submission Date: {submission_date}
-"""
-'''
