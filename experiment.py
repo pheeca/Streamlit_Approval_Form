@@ -80,7 +80,7 @@ hide_github_icon = """ <style>
     max-width: 55rem
 }
 [data-testid="stToolbar"] {
-    max-width: 55rem
+     display: none;
 }
  </style>
 """
@@ -436,5 +436,5 @@ if submit_button:
             worksheet.update('A'+str(editIndex),[submission_data])
         else:
             worksheet.append_row(submission_data)
-        send_email(secret_config["EmailSender"],secret_config["EmailPass"],secret_config["EmailRecieve"],emailSub,getEmail(submission_data,open("pdftemplate.tmp", "r").read()))  
+        send_email(secret_config["EmailSender"],secret_config["EmailPass"],mail_factures,emailSub,getEmail(submission_data,open("pdftemplate.tmp", "r").read()))  
         st.success("Form submitted successfully!")
