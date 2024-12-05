@@ -387,6 +387,7 @@ else:
                 st.toast(f"Fichier téléchargé.")
 
 accpeted=form.checkbox("J’accepte les conditions générales de ventes dont un exemplaire m’a été remis (fourni avec chaque devis ou proforma)",str(accpeted).lower()=='true')
+form.write('<a href="https://www.lejeune.tm.fr/CGV.pdf">conditions</a>', unsafe_allow_html = True)
 
 line_seperator3=form.divider()
 
@@ -409,6 +410,11 @@ with form:
             #display_toolbar=False,
             key="full_app",
         )
+    
+    #down_button = form.form_submit_button(label="download")
+    #if down_button:
+    #    a = 1
+
 date = r4col1.date_input("Date",date)
 
 visadirection1 = r4col2.caption("VISA DIRECTION")
