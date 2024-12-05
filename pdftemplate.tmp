@@ -1,75 +1,28 @@
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ouverture de Compte Pro - Maison Lejeune</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: black;
-            color:white;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-            background-color: black;
-color:white;
- padding: 20px;
-        }
-       
-        .content {
-            padding: 20px;
-        }
-        .content p {
-            margin: 10px 0;
-        }
-        .footer {
-            text-align: center;
-            padding: 10px 0;
-            background: #333;
-            color: #fff;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        .signature {
-            margin-top: 20px;
-            border-top: 1px solid #ddd;
-            padding-top: 10px;
-        }
-    </style>
-</head>
+
 <body>
     <div class="container">
-        <div class="header" style="text-align: center;padding: 20px 0;">
-            <img style="width: 150px;"  src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDIzLjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCAzMy44IDMyIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAzMy44IDMyOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+Cgkuc3Qwe2ZpbGw6I0ZGRkZGRjt9Cjwvc3R5bGU+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik01LjIsMjhjLTAuNiwwLjEtMS4zLDAuMS0xLjksMC4yYzAtMS42LDAtMy4yLDAtNC43Yy0wLjMsMC0wLjcsMC0xLDBjMCwyLDAsMy45LDAsNS45YzEtMC4xLDEuOS0wLjMsMi45LTAuNAoJQzUuMiwyOC43LDUuMiwyOC40LDUuMiwyOHoiLz4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTkuMiwyNy43Yy0wLjcsMC0xLjQsMC4xLTIuMiwwLjFjMC0wLjQsMC0wLjgsMC0xLjJjMC41LDAsMS0wLjEsMS40LTAuMWMwLTAuMywwLTAuNywwLTFjLTAuNSwwLTEsMC0xLjQsMC4xCgljMC0wLjQsMC0wLjgsMC0xLjJjMC43LDAsMS40LDAsMi4xLDBjMC0wLjMsMC0wLjYsMC0xYy0xLDAtMi4xLDAtMy4xLDBjMCwxLjgsMCwzLjYsMCw1LjRjMS4xLTAuMSwyLjEtMC4yLDMuMi0wLjMKCUM5LjIsMjguMyw5LjIsMjgsOS4yLDI3Ljd6Ii8+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xMi4xLDIzLjVjMCwxLjEsMCwyLjIsMCwzLjNjMCwwLjctMC40LDAuOC0wLjcsMC44Yy0wLjMsMC0wLjYtMC4xLTAuNy0wLjNjLTAuMiwwLjItMC40LDAuNS0wLjYsMC43CgljMC4zLDAuMywwLjgsMC42LDEuNCwwLjVjMC43LDAsMS42LTAuNSwxLjYtMS44YzAtMS4xLDAtMi4yLDAtMy4zQzEyLjcsMjMuNSwxMi40LDIzLjUsMTIuMSwyMy41eiIvPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTcuNCwyNy41Yy0wLjcsMC0xLjQsMC0yLjIsMGMwLTAuNCwwLTAuNywwLTEuMWMwLjUsMCwxLDAsMS40LDBjMC0wLjMsMC0wLjYsMC0wLjljLTAuNSwwLTEsMC0xLjQsMAoJYzAtMC40LDAtMC43LDAtMS4xYzAuNywwLDEuNCwwLDIuMSwwYzAtMC4zLDAtMC42LDAtMC45Yy0xLDAtMi4xLDAtMy4xLDBjMCwxLjYsMCwzLjMsMCw0LjljMS4xLDAsMi4xLDAsMy4yLDAKCUMxNy40LDI4LjEsMTcuNCwyNy44LDE3LjQsMjcuNXoiLz4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTIyLjIsMjYuN2MwLTEuMSwwLTIuMSwwLTMuMmMtMC4zLDAtMC42LDAtMSwwYzAsMS4xLDAsMi4xLDAsMy4yYzAsMC43LTAuNSwwLjktMC45LDAuOWMtMC40LDAtMC45LTAuMy0wLjktMQoJYzAtMSwwLTIuMSwwLTMuMWMtMC4zLDAtMC42LDAtMSwwYzAsMSwwLDIuMSwwLDMuMWMwLDEuMSwwLjksMS44LDEuOSwxLjlDMjEuMywyOC41LDIyLjIsMjcuOSwyMi4yLDI2Ljd6Ii8+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0yNy4xLDI4LjlDMjcuMiwyOC45LDI3LjIsMjguOSwyNy4xLDI4LjljMC0xLjgsMC0zLjYsMC01LjRjLTAuMywwLTAuNywwLTEsMGMwLDEsMCwxLjksMCwyLjkKCWMtMC45LTEtMS45LTItMi44LTIuOWMwLDAsMCwwLDAsMGMwLDEuNywwLDMuNCwwLDUuMWMwLjMsMCwwLjcsMCwxLDAuMWMwLTAuOSwwLTEuOSwwLTIuOEMyNS4zLDI2LjgsMjYuMiwyNy44LDI3LjEsMjguOXoiLz4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTMxLjYsMjkuNGMwLTAuNCwwLTAuNywwLTEuMWMtMC43LTAuMS0xLjQtMC4yLTIuMi0wLjJjMC0wLjQsMC0wLjgsMC0xLjJjMC41LDAsMSwwLjEsMS40LDAuMQoJYzAtMC40LDAtMC43LDAtMS4xYy0wLjUsMC0xLTAuMS0xLjQtMC4xYzAtMC40LDAtMC44LDAtMS4yYzAuNywwLDEuNCwwLDIuMSwwLjFjMC0wLjQsMC0wLjcsMC0xLjFjLTEsMC0yLjEsMC0zLjEsMAoJYzAsMS44LDAsMy43LDAsNS41QzI5LjQsMjkuMSwzMC41LDI5LjMsMzEuNiwyOS40eiIvPgo8cG9seWdvbiBjbGFzcz0ic3QwIiBwb2ludHM9IjEyLjQsMjIuNCAxMi40LDIwLjUgMTIsMjAuNSAxMS40LDIxLjggMTAuOCwyMC41IDEwLjQsMjAuNSAxMC40LDIyLjQgMTAuOCwyMi40IDEwLjgsMjEuNCAxMS4yLDIyLjQgCgkxMS42LDIyLjQgMTIsMjEuNCAxMiwyMi40ICIvPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTQuNiwyMi40SDE1bC0wLjktMS45aDBsLTAuOSwxLjloMC40bDAuMS0wLjNoMC44TDE0LjYsMjIuNHogTTEzLjksMjEuOGwwLjItMC41bDAuMiwwLjVIMTMuOXoiLz4KPHJlY3QgeD0iMTUuOCIgeT0iMjAuNSIgY2xhc3M9InN0MCIgd2lkdGg9IjAuNCIgaGVpZ2h0PSIxLjkiLz4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTE4LjQsMjEuOWMwLTAuMy0wLjItMC41LTAuNi0wLjZsLTAuMSwwYy0wLjItMC4xLTAuMi0wLjEtMC4yLTAuMmMwLTAuMSwwLjEtMC4yLDAuMi0wLjJjMC4xLDAsMC4yLDAsMC4zLDAuMQoJbDAuNC0wLjFjLTAuMS0wLjItMC4zLTAuNC0wLjYtMC40Yy0wLjMsMC0wLjYsMC4yLTAuNiwwLjVjMCwwLjMsMC4yLDAuNSwwLjUsMC42bDAuMSwwYzAuMiwwLjEsMC4zLDAuMSwwLjMsMC4zCgljMCwwLjItMC4xLDAuMi0wLjMsMC4yYy0wLjIsMC0wLjMtMC4xLTAuNC0wLjJMMTcsMjJjMC4xLDAuMywwLjQsMC40LDAuNywwLjRDMTgsMjIuNCwxOC40LDIyLjMsMTguNCwyMS45eiIvPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTkuMSwyMS40YzAsMC42LDAuNSwxLDEsMWMwLjUsMCwxLTAuNCwxLTFjMC0wLjYtMC41LTEtMS0xQzE5LjYsMjAuNSwxOS4xLDIwLjksMTkuMSwyMS40eiBNMjAuNiwyMS40CgljMCwwLjMtMC4yLDAuNi0wLjUsMC42Yy0wLjMsMC0wLjUtMC4yLTAuNS0wLjZjMC0wLjMsMC4yLTAuNiwwLjUtMC42QzIwLjQsMjAuOSwyMC42LDIxLjEsMjAuNiwyMS40eiIvPgo8cG9seWdvbiBjbGFzcz0ic3QwIiBwb2ludHM9IjIzLjQsMjIuNCAyMy40LDIwLjUgMjMsMjAuNSAyMywyMS41IDIxLjksMjAuNSAyMS45LDIwLjUgMjEuOSwyMi40IDIyLjMsMjIuNCAyMi4zLDIxLjQgMjMuNCwyMi40ICIvPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTYuOSwxOC43YzQuNiwwLDguNC0zLjgsOC40LTguNGMwLTQuNi0zLjgtOC40LTguNC04LjRjLTQuNiwwLTguNCwzLjgtOC40LDguNEM4LjUsMTUsMTIuMywxOC43LDE2LjksMTguN3oKCSBNMTkuNiwxMS44aC0wLjd2MS45YzAsMC40LTAuMywwLjctMC43LDAuN2gtMi41Yy0wLjQsMC0wLjctMC4zLTAuNy0wLjd2LTEuOWgtMC43di0wLjJoMS4xdjIuMWMwLDAuMSwwLjEsMC4zLDAuMywwLjNoMi41CgljMC4xLDAsMC4zLTAuMSwwLjMtMC4zdi0yLjFoMS4xVjExLjh6IE0xNi4zLDExLjNMMTYuMywxMS4zbC0wLjIsMGwwLDBjLTAuMS0wLjMtMC4xLTAuNywwLTEuMWMwLTAuMSwwLjEtMC4zLDAuMS0wLjRsMCwwbDAuMiwwCglsMCwwYzAsMC4yLDAsMC4zLTAuMSwwLjVDMTYuMSwxMC42LDE2LjIsMTEuMSwxNi4zLDExLjN6IE0xNi44LDlMMTYuOCw5TDE3LDlsMCwwYzAuMSwwLjIsMC4xLDAuNywwLDEuMmMtMC4xLDAuNSwwLDAuOSwwLDEuMWwwLDAKCWgtMC4ybDAsMGMtMC4xLTAuMi0wLjEtMC43LDAtMS4xQzE3LDkuNiwxNi44LDkuMSwxNi44LDl6IE0xNy43LDkuNEwxNy43LDkuNGwwLjIsMGwwLDBjMCwwLjMsMCwwLjUsMCwwLjdjLTAuMSwwLjUsMCwwLjksMC4xLDEuMQoJbDAsMGgtMC4ybDAsMGMtMC4xLTAuMi0wLjItMC43LDAtMS4xQzE3LjcsOS45LDE3LjcsOS43LDE3LjcsOS40eiBNMjIuMywxMC42YzAtMC41LDAuMy0wLjksMC44LTAuOWMwLjUsMCwwLjgsMC40LDAuOCwwLjl2MC4xCgljMCwwLjUtMC4zLDAuOS0wLjgsMC45QzIyLjYsMTEuNiwyMi4zLDExLjIsMjIuMywxMC42TDIyLjMsMTAuNnogTTIxLjMsMTAuNmMwLDAtMC4xLDAtMC4xLDBsMCwwbDAuNC0wLjdoLTAuOFY5LjdIMjJsLTAuNCwwLjcKCWMwLjIsMCwwLjUsMC4yLDAuNSwwLjZjMCwwLjQtMC4zLDAuNi0wLjcsMC42Yy0wLjMsMC0wLjUtMC4yLTAuNi0wLjRsMCwwbDAuMi0wLjFsMCwwYzAuMSwwLjIsMC4yLDAuMywwLjQsMC4zCgljMC4yLDAsMC40LTAuMSwwLjQtMC40QzIxLjgsMTAuOCwyMS42LDEwLjYsMjEuMywxMC42eiBNMTUuNCw1LjljMC40LTAuMywwLjktMC41LDEuNS0wLjVjMC42LDAsMS4xLDAuMiwxLjUsMC41CgljMC45LDAsMS43LDAuNSwxLjcsMS4yYzAsMC41LTAuNSwxLTEuMiwxLjJ2Mi4xaC0wLjVWOC4zVjhsMC40LTAuMWMwLjUtMC4xLDAuOC0wLjQsMC44LTAuN2MwLTAuNC0wLjYtMC44LTEuMi0wLjhsLTAuMiwwbC0wLjEtMC4xCgljLTAuMy0wLjItMC43LTAuNC0xLjItMC40Yy0wLjUsMC0wLjksMC4xLTEuMiwwLjRsLTAuMSwwLjFsLTAuMiwwYy0wLjcsMC0xLjIsMC40LTEuMiwwLjhjMCwwLjMsMC4zLDAuNiwwLjgsMC43TDE1LjQsOHYwLjR2Mi4xCgloLTAuNVY4LjNjLTAuNy0wLjItMS4yLTAuNi0xLjItMS4yQzEzLjcsNi41LDE0LjUsNS45LDE1LjQsNS45eiBNMTIuMiw5LjdjMC4zLDAsMC42LDAuMywwLjYsMC42YzAsMC4zLTAuMiwwLjUtMC4zLDAuN2wwLDAKCWwtMC40LDAuNmgtMC4zbDAuNS0wLjdjMCwwLTAuMSwwLTAuMSwwYy0wLjMsMC0wLjYtMC4zLTAuNi0wLjZDMTEuNiwxMCwxMS45LDkuNywxMi4yLDkuN3ogTTEwLjYsOS45VjkuN2gwLjV2MS45aC0wLjNWOS45SDEwLjZ6IgoJLz4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTEyLjIsMTAuNmMwLjIsMCwwLjQtMC4xLDAuNC0wLjRjMC0wLjItMC4yLTAuNC0wLjQtMC40Yy0wLjIsMC0wLjQsMC4xLTAuNCwwLjRDMTEuOSwxMC41LDEyLjEsMTAuNiwxMi4yLDEwLjYKCXoiLz4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTIzLjEsMTEuNGMwLjMsMCwwLjUtMC4zLDAuNS0wLjd2LTAuMWMwLTAuNC0wLjItMC43LTAuNS0wLjdjLTAuMywwLTAuNSwwLjMtMC41LDAuN3YwLjEKCUMyMi42LDExLjEsMjIuOCwxMS40LDIzLjEsMTEuNHoiLz4KPC9zdmc+Cg==" alt="Maison Lejeune Logo">
+        <div class="header" style="text-align: center;padding: 20px 0;display:flex;justify-content: center;">
+            <img style="width: 150px;background-color:black;"  src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDIzLjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCAzMy44IDMyIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAzMy44IDMyOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+Cgkuc3Qwe2ZpbGw6I0ZGRkZGRjt9Cjwvc3R5bGU+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik01LjIsMjhjLTAuNiwwLjEtMS4zLDAuMS0xLjksMC4yYzAtMS42LDAtMy4yLDAtNC43Yy0wLjMsMC0wLjcsMC0xLDBjMCwyLDAsMy45LDAsNS45YzEtMC4xLDEuOS0wLjMsMi45LTAuNAoJQzUuMiwyOC43LDUuMiwyOC40LDUuMiwyOHoiLz4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTkuMiwyNy43Yy0wLjcsMC0xLjQsMC4xLTIuMiwwLjFjMC0wLjQsMC0wLjgsMC0xLjJjMC41LDAsMS0wLjEsMS40LTAuMWMwLTAuMywwLTAuNywwLTFjLTAuNSwwLTEsMC0xLjQsMC4xCgljMC0wLjQsMC0wLjgsMC0xLjJjMC43LDAsMS40LDAsMi4xLDBjMC0wLjMsMC0wLjYsMC0xYy0xLDAtMi4xLDAtMy4xLDBjMCwxLjgsMCwzLjYsMCw1LjRjMS4xLTAuMSwyLjEtMC4yLDMuMi0wLjMKCUM5LjIsMjguMyw5LjIsMjgsOS4yLDI3Ljd6Ii8+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xMi4xLDIzLjVjMCwxLjEsMCwyLjIsMCwzLjNjMCwwLjctMC40LDAuOC0wLjcsMC44Yy0wLjMsMC0wLjYtMC4xLTAuNy0wLjNjLTAuMiwwLjItMC40LDAuNS0wLjYsMC43CgljMC4zLDAuMywwLjgsMC42LDEuNCwwLjVjMC43LDAsMS42LTAuNSwxLjYtMS44YzAtMS4xLDAtMi4yLDAtMy4zQzEyLjcsMjMuNSwxMi40LDIzLjUsMTIuMSwyMy41eiIvPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTcuNCwyNy41Yy0wLjcsMC0xLjQsMC0yLjIsMGMwLTAuNCwwLTAuNywwLTEuMWMwLjUsMCwxLDAsMS40LDBjMC0wLjMsMC0wLjYsMC0wLjljLTAuNSwwLTEsMC0xLjQsMAoJYzAtMC40LDAtMC43LDAtMS4xYzAuNywwLDEuNCwwLDIuMSwwYzAtMC4zLDAtMC42LDAtMC45Yy0xLDAtMi4xLDAtMy4xLDBjMCwxLjYsMCwzLjMsMCw0LjljMS4xLDAsMi4xLDAsMy4yLDAKCUMxNy40LDI4LjEsMTcuNCwyNy44LDE3LjQsMjcuNXoiLz4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTIyLjIsMjYuN2MwLTEuMSwwLTIuMSwwLTMuMmMtMC4zLDAtMC42LDAtMSwwYzAsMS4xLDAsMi4xLDAsMy4yYzAsMC43LTAuNSwwLjktMC45LDAuOWMtMC40LDAtMC45LTAuMy0wLjktMQoJYzAtMSwwLTIuMSwwLTMuMWMtMC4zLDAtMC42LDAtMSwwYzAsMSwwLDIuMSwwLDMuMWMwLDEuMSwwLjksMS44LDEuOSwxLjlDMjEuMywyOC41LDIyLjIsMjcuOSwyMi4yLDI2Ljd6Ii8+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0yNy4xLDI4LjlDMjcuMiwyOC45LDI3LjIsMjguOSwyNy4xLDI4LjljMC0xLjgsMC0zLjYsMC01LjRjLTAuMywwLTAuNywwLTEsMGMwLDEsMCwxLjksMCwyLjkKCWMtMC45LTEtMS45LTItMi44LTIuOWMwLDAsMCwwLDAsMGMwLDEuNywwLDMuNCwwLDUuMWMwLjMsMCwwLjcsMCwxLDAuMWMwLTAuOSwwLTEuOSwwLTIuOEMyNS4zLDI2LjgsMjYuMiwyNy44LDI3LjEsMjguOXoiLz4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTMxLjYsMjkuNGMwLTAuNCwwLTAuNywwLTEuMWMtMC43LTAuMS0xLjQtMC4yLTIuMi0wLjJjMC0wLjQsMC0wLjgsMC0xLjJjMC41LDAsMSwwLjEsMS40LDAuMQoJYzAtMC40LDAtMC43LDAtMS4xYy0wLjUsMC0xLTAuMS0xLjQtMC4xYzAtMC40LDAtMC44LDAtMS4yYzAuNywwLDEuNCwwLDIuMSwwLjFjMC0wLjQsMC0wLjcsMC0xLjFjLTEsMC0yLjEsMC0zLjEsMAoJYzAsMS44LDAsMy43LDAsNS41QzI5LjQsMjkuMSwzMC41LDI5LjMsMzEuNiwyOS40eiIvPgo8cG9seWdvbiBjbGFzcz0ic3QwIiBwb2ludHM9IjEyLjQsMjIuNCAxMi40LDIwLjUgMTIsMjAuNSAxMS40LDIxLjggMTAuOCwyMC41IDEwLjQsMjAuNSAxMC40LDIyLjQgMTAuOCwyMi40IDEwLjgsMjEuNCAxMS4yLDIyLjQgCgkxMS42LDIyLjQgMTIsMjEuNCAxMiwyMi40ICIvPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTQuNiwyMi40SDE1bC0wLjktMS45aDBsLTAuOSwxLjloMC40bDAuMS0wLjNoMC44TDE0LjYsMjIuNHogTTEzLjksMjEuOGwwLjItMC41bDAuMiwwLjVIMTMuOXoiLz4KPHJlY3QgeD0iMTUuOCIgeT0iMjAuNSIgY2xhc3M9InN0MCIgd2lkdGg9IjAuNCIgaGVpZ2h0PSIxLjkiLz4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTE4LjQsMjEuOWMwLTAuMy0wLjItMC41LTAuNi0wLjZsLTAuMSwwYy0wLjItMC4xLTAuMi0wLjEtMC4yLTAuMmMwLTAuMSwwLjEtMC4yLDAuMi0wLjJjMC4xLDAsMC4yLDAsMC4zLDAuMQoJbDAuNC0wLjFjLTAuMS0wLjItMC4zLTAuNC0wLjYtMC40Yy0wLjMsMC0wLjYsMC4yLTAuNiwwLjVjMCwwLjMsMC4yLDAuNSwwLjUsMC42bDAuMSwwYzAuMiwwLjEsMC4zLDAuMSwwLjMsMC4zCgljMCwwLjItMC4xLDAuMi0wLjMsMC4yYy0wLjIsMC0wLjMtMC4xLTAuNC0wLjJMMTcsMjJjMC4xLDAuMywwLjQsMC40LDAuNywwLjRDMTgsMjIuNCwxOC40LDIyLjMsMTguNCwyMS45eiIvPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTkuMSwyMS40YzAsMC42LDAuNSwxLDEsMWMwLjUsMCwxLTAuNCwxLTFjMC0wLjYtMC41LTEtMS0xQzE5LjYsMjAuNSwxOS4xLDIwLjksMTkuMSwyMS40eiBNMjAuNiwyMS40CgljMCwwLjMtMC4yLDAuNi0wLjUsMC42Yy0wLjMsMC0wLjUtMC4yLTAuNS0wLjZjMC0wLjMsMC4yLTAuNiwwLjUtMC42QzIwLjQsMjAuOSwyMC42LDIxLjEsMjAuNiwyMS40eiIvPgo8cG9seWdvbiBjbGFzcz0ic3QwIiBwb2ludHM9IjIzLjQsMjIuNCAyMy40LDIwLjUgMjMsMjAuNSAyMywyMS41IDIxLjksMjAuNSAyMS45LDIwLjUgMjEuOSwyMi40IDIyLjMsMjIuNCAyMi4zLDIxLjQgMjMuNCwyMi40ICIvPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTYuOSwxOC43YzQuNiwwLDguNC0zLjgsOC40LTguNGMwLTQuNi0zLjgtOC40LTguNC04LjRjLTQuNiwwLTguNCwzLjgtOC40LDguNEM4LjUsMTUsMTIuMywxOC43LDE2LjksMTguN3oKCSBNMTkuNiwxMS44aC0wLjd2MS45YzAsMC40LTAuMywwLjctMC43LDAuN2gtMi41Yy0wLjQsMC0wLjctMC4zLTAuNy0wLjd2LTEuOWgtMC43di0wLjJoMS4xdjIuMWMwLDAuMSwwLjEsMC4zLDAuMywwLjNoMi41CgljMC4xLDAsMC4zLTAuMSwwLjMtMC4zdi0yLjFoMS4xVjExLjh6IE0xNi4zLDExLjNMMTYuMywxMS4zbC0wLjIsMGwwLDBjLTAuMS0wLjMtMC4xLTAuNywwLTEuMWMwLTAuMSwwLjEtMC4zLDAuMS0wLjRsMCwwbDAuMiwwCglsMCwwYzAsMC4yLDAsMC4zLTAuMSwwLjVDMTYuMSwxMC42LDE2LjIsMTEuMSwxNi4zLDExLjN6IE0xNi44LDlMMTYuOCw5TDE3LDlsMCwwYzAuMSwwLjIsMC4xLDAuNywwLDEuMmMtMC4xLDAuNSwwLDAuOSwwLDEuMWwwLDAKCWgtMC4ybDAsMGMtMC4xLTAuMi0wLjEtMC43LDAtMS4xQzE3LDkuNiwxNi44LDkuMSwxNi44LDl6IE0xNy43LDkuNEwxNy43LDkuNGwwLjIsMGwwLDBjMCwwLjMsMCwwLjUsMCwwLjdjLTAuMSwwLjUsMCwwLjksMC4xLDEuMQoJbDAsMGgtMC4ybDAsMGMtMC4xLTAuMi0wLjItMC43LDAtMS4xQzE3LjcsOS45LDE3LjcsOS43LDE3LjcsOS40eiBNMjIuMywxMC42YzAtMC41LDAuMy0wLjksMC44LTAuOWMwLjUsMCwwLjgsMC40LDAuOCwwLjl2MC4xCgljMCwwLjUtMC4zLDAuOS0wLjgsMC45QzIyLjYsMTEuNiwyMi4zLDExLjIsMjIuMywxMC42TDIyLjMsMTAuNnogTTIxLjMsMTAuNmMwLDAtMC4xLDAtMC4xLDBsMCwwbDAuNC0wLjdoLTAuOFY5LjdIMjJsLTAuNCwwLjcKCWMwLjIsMCwwLjUsMC4yLDAuNSwwLjZjMCwwLjQtMC4zLDAuNi0wLjcsMC42Yy0wLjMsMC0wLjUtMC4yLTAuNi0wLjRsMCwwbDAuMi0wLjFsMCwwYzAuMSwwLjIsMC4yLDAuMywwLjQsMC4zCgljMC4yLDAsMC40LTAuMSwwLjQtMC40QzIxLjgsMTAuOCwyMS42LDEwLjYsMjEuMywxMC42eiBNMTUuNCw1LjljMC40LTAuMywwLjktMC41LDEuNS0wLjVjMC42LDAsMS4xLDAuMiwxLjUsMC41CgljMC45LDAsMS43LDAuNSwxLjcsMS4yYzAsMC41LTAuNSwxLTEuMiwxLjJ2Mi4xaC0wLjVWOC4zVjhsMC40LTAuMWMwLjUtMC4xLDAuOC0wLjQsMC44LTAuN2MwLTAuNC0wLjYtMC44LTEuMi0wLjhsLTAuMiwwbC0wLjEtMC4xCgljLTAuMy0wLjItMC43LTAuNC0xLjItMC40Yy0wLjUsMC0wLjksMC4xLTEuMiwwLjRsLTAuMSwwLjFsLTAuMiwwYy0wLjcsMC0xLjIsMC40LTEuMiwwLjhjMCwwLjMsMC4zLDAuNiwwLjgsMC43TDE1LjQsOHYwLjR2Mi4xCgloLTAuNVY4LjNjLTAuNy0wLjItMS4yLTAuNi0xLjItMS4yQzEzLjcsNi41LDE0LjUsNS45LDE1LjQsNS45eiBNMTIuMiw5LjdjMC4zLDAsMC42LDAuMywwLjYsMC42YzAsMC4zLTAuMiwwLjUtMC4zLDAuN2wwLDAKCWwtMC40LDAuNmgtMC4zbDAuNS0wLjdjMCwwLTAuMSwwLTAuMSwwYy0wLjMsMC0wLjYtMC4zLTAuNi0wLjZDMTEuNiwxMCwxMS45LDkuNywxMi4yLDkuN3ogTTEwLjYsOS45VjkuN2gwLjV2MS45aC0wLjNWOS45SDEwLjZ6IgoJLz4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTEyLjIsMTAuNmMwLjIsMCwwLjQtMC4xLDAuNC0wLjRjMC0wLjItMC4yLTAuNC0wLjQtMC40Yy0wLjIsMC0wLjQsMC4xLTAuNCwwLjRDMTEuOSwxMC41LDEyLjEsMTAuNiwxMi4yLDEwLjYKCXoiLz4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTIzLjEsMTEuNGMwLjMsMCwwLjUtMC4zLDAuNS0wLjd2LTAuMWMwLTAuNC0wLjItMC43LTAuNS0wLjdjLTAuMywwLTAuNSwwLjMtMC41LDAuN3YwLjEKCUMyMi42LDExLjEsMjIuOCwxMS40LDIzLjEsMTEuNHoiLz4KPC9zdmc+Cg==" alt="Maison Lejeune Logo">
             <h1>Ouverture de Compte Pro</h1>
         </div>
         <div class="content">
-            <h2>Informations de Compte</h2>
-            <p><strong>N° de Compte:</strong> {0}</p>
-            <p><strong>SIRET:</strong> {1}</p>
-            <p><strong>Établissement:</strong> {2}</p>
-            <p><strong>TVA Européen:</strong> FR{3}</p>
-            <p><strong>Pays:</strong> {4}</p>
-
+        <div><div>
+            <p style="width:50%" ><strong>N° de Compte:</strong> {0}</p>
+         
+            <p style="width:50%"><strong>Établissement:</strong> {2}</p>
+            <p style="width:50%"><strong>Pays:</strong> {4}</p></div>
+            </div><div>
+               <p style="width:50%"><strong>SIRET:</strong> {1}</p>
+            <p style="width:50%"><strong>TVA Européen:</strong> FR{3}</p>
+</div><div>
             <h2>Informations de Livraison</h2>
             <p><strong>Nom:</strong> {5}</p>
             <p><strong>Adresse:</strong> {6}</p>
             <p><strong>Code Postal:</strong> {7}</p>
             <p><strong>Ville:</strong> {8}</p>
             <p><strong>Pays:</strong> {9}</p>
-
+</div><div>
             <h2>Informations de Facturation</h2>
             <p><strong>Société:</strong> {10}</p>
             <p><strong>Adresse 2:</strong> {11}</p>
@@ -77,7 +30,7 @@ color:white;
             <p><strong>Ville:</strong> {13}</p>
             <p><strong>Envoi des factures:</strong> {14}</p>
             <p><strong>Mail Factures:</strong> {15}</p>
-
+</div><div>
             <h2>Contacts</h2>
             <table>
                 <thead>
@@ -133,14 +86,15 @@ color:white;
                     </tr>
                 </tbody>
             </table>
-
+            <div>
+            <a href"https://www.lejeune.tm.fr/CGV.pdf">conditions générales de vente</a>
             <h2>Le Client</h2>
-            <p><strong>Représenté par:</strong> {41}</p>
-            <p><strong>Date:</strong> {42}</p>
-            <p><strong>Visa Direction:</strong> {43}</p>
+            <p><strong>Représenté par:</strong> {43}</p>
+            <p><strong>Date:</strong> {44}</p>
+            <p><strong>Visa Direction:</strong></p>
             <div class="signature">
                 <p><strong>Signature:</strong></p>
-                <img src="{44}" alt="Signature">
+                <img src="cid:signature.jpg" alt="Signature">
             </div>
         </div>
         <div class="footer">

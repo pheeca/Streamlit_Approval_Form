@@ -133,14 +133,14 @@ color:white;
                     </tr>
                 </tbody>
             </table>
-
+            <a href"https://www.lejeune.tm.fr/CGV.pdf">conditions générales de vente</a>
             <h2>Le Client</h2>
-            <p><strong>Représenté par:</strong> {41}</p>
-            <p><strong>Date:</strong> {42}</p>
-            <p><strong>Visa Direction:</strong> {43}</p>
+            <p><strong>Représenté par:</strong> {43}</p>
+            <p><strong>Date:</strong> {44}</p>
+            <p><strong>Visa Direction:</strong></p>
             <div class="signature">
                 <p><strong>Signature:</strong></p>
-                <img src="{44}" alt="Signature">
+                <img src="cid:signature.jpg" alt="Signature">
             </div>
         </div>
         <div class="footer">

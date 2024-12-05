@@ -24,6 +24,8 @@ import json
 import io
 from xhtml2pdf import pisa
 from email.mime.image import MIMEImage
+from email.mime.base import MIMEBase
+from email import encoders
 
 # Function to generate a random UID for each submission
 def generate_random_uid():
@@ -65,6 +67,7 @@ try:
         "client_x509_cert_url": secret_config["client_x509_cert_url"]
     }
     sheetId =  secret_config["sheetId"]
+    EmailRecieve =  secret_config["EmailRecieve"]
     UploadPDFfolder =  secret_config["UploadPDFfolder"]
     UploadSignfolder =  secret_config["UploadSignfolder"]
 except KeyError as e:
@@ -172,6 +175,42 @@ def send_email(sender_email, sender_password, recipient_email, subject, body):
         im = MIMEImage(open("logo-white.svg", 'rb').read(),_subtype=False, name=os.path.basename("logo-white.svg"))
         im.add_header('Content-ID', 'logo-white.svg')
         message.attach(im)
+
+        uploadedsign = st.session_state['uploadedsign'] 
+        if uploadedsign:  
+            file6 = drive.CreateFile({'id': uploadedsign}) 
+            file6.GetContentFile('uploads/'+uploadedsign+'.jpg')
+            im2 = MIMEImage(open('uploads/'+uploadedsign+'.jpg', 'rb').read(), name=os.path.basename("signature.jpg"))
+            im2.add_header('Content-ID', 'signature.jpg')
+            message.attach(im2)
+            os.remove('uploads/'+uploadedsign+'.jpg')
+        with open("./static/conditions-générales-de-vente.pdf", "rb") as attachment:
+            # Create a MIMEBase object
+            part = MIMEBase("application", "octet-stream")
+            part.set_payload(attachment.read())
+            encoders.encode_base64(part)
+            part.add_header(
+                "Content-Disposition", 'attachment', filename=os.path.basename(attachment.name)
+               # f"attachment; filename= {os.path.basename(attachment.name)}",
+            )
+            message.attach(part)
+        #message.attach(MIMEText(open("./static/conditions-générales-de-vente.pdf", encoding="utf8").read()))
+        for upedfile in st.session_state['uploadedpdf']:
+            upfile = drive.CreateFile({'id': upedfile['gid']}) 
+            upfile.GetContentFile('uploads/'+upedfile['uname'])
+            if upedfile['uname'].lower().endswith(".pdf"):
+                with open('uploads/'+upedfile['uname'], "rb") as attachment2:
+                    part2 = MIMEBase("application", "octet-stream")
+                    part2.set_payload(attachment2.read())
+                    encoders.encode_base64(part2)
+                    part2.add_header(
+                        "Content-Disposition",
+                        f"attachment; filename= {os.path.basename(attachment2.name)}",
+                    )
+                    message.attach(part2)
+            else:
+                message.attach(MIMEImage(open('uploads/'+upedfile['uname']).read()))
+            os.remove('uploads/'+upedfile['uname'])
         #message.attach(MIMEMultipart())
         # Establish a secure session with Gmail's outgoing SMTP server
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
@@ -375,7 +414,7 @@ date = r4col1.date_input("Date",date)
 visadirection1 = r4col2.caption("VISA DIRECTION")
 visadirection2 = r4col2.caption("MAISON LEJEUNE")
 
-submit_button = form.form_submit_button(label='Submit')
+submit_button = form.form_submit_button(label="envoyer ma demande d'ouverture")
 
 def getEmail(submittedData,tmp):
     tmp2=tmp.replace("{"+str(45)+"}",str(datetime.now().year))
@@ -391,7 +430,7 @@ dfdata = [x for xs in list(map(lambda kv:[dd['Nom'][kv[0]],dd['Prénom'][kv[0]],
 submission_data = [currentID,'https://ouverture-de-compte-pro-maison-lejeune.streamlit.app/?edit='+currentID,submission_date,edit_date,no_de_compete,establissement,pays,siret,tva_europeen_FR,nom,adresse,code_postal,ville,livraisonpays,societe,facturation_adresse,facturation_code_postal,facturation_ville,envoi_des_factures,mail_factures]+dfdata+[','.join(list(map(lambda g:g['gid'],st.session_state['uploadedpdf']))),accpeted,representePar,date.strftime("%Y-%m-%d %H:%M:%S"),'']#st.session_state['uploadedsign']
 
 pisa.CreatePDF(
-    getEmail(submission_data,open("htmltemplate.tmp", "r").read()),  # page data
+    getEmail(submission_data,open("pdftemplate.tmp", "r").read()),  # page data
     dest=output,                                              # destination "file"
 )
 st.download_button('Download PDF', output.getbuffer().tobytes(), file_name='example.pdf', mime='application/pdf')
@@ -405,6 +444,7 @@ if submit_button:
         if canvas_result.image_data is not None and len(canvas_result.image_data[canvas_result.image_data<238])>0:
             fname = currentID+" - sign - "+generate_random_uid()+".jpg"
             gfile = drive.CreateFile({"parents": [{'id': UploadSignfolder}], "title": fname})
+           
             drawing = Image.fromarray((canvas_result.image_data).astype(np.uint8))
             drawing.convert('RGB').save('uploads/'+fname)
             gfile.SetContentFile('uploads/'+fname)
@@ -436,5 +476,6 @@ if submit_button:
             worksheet.update('A'+str(editIndex),[submission_data])
         else:
             worksheet.append_row(submission_data)
-        send_email(secret_config["EmailSender"],secret_config["EmailPass"],mail_factures,emailSub,getEmail(submission_data,open("pdftemplate.tmp", "r").read()))  
+            #mail_factures
+        send_email(secret_config["EmailSender"],secret_config["EmailPass"],EmailRecieve,emailSub,getEmail(submission_data,open("pdftemplate.tmp", "r").read()))  
         st.success("Form submitted successfully!")
