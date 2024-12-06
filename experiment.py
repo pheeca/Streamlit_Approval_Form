@@ -174,8 +174,8 @@ def send_email(sender_email, sender_password, recipient_email, subject, body):
 
         # Attach the body to the message
         message.attach(MIMEText(body, 'html'))
-        im = MIMEImage(open("logo-white.svg", 'rb').read(),_subtype=False, name=os.path.basename("logo-white.svg"))
-        im.add_header('Content-ID', 'logo-white.svg')
+        im = MIMEImage(open("logo-white.svg", 'rb').read(), _subtype=False, name=os.path.basename("logo-white.svg"))
+        im.add_header('Content-ID', '<logo-white.svg>')
         message.attach(im)
 
         uploadedsign = st.session_state['uploadedsign'] 
@@ -183,7 +183,7 @@ def send_email(sender_email, sender_password, recipient_email, subject, body):
             file6 = drive.CreateFile({'id': uploadedsign}) 
             file6.GetContentFile('uploads/'+uploadedsign+'.jpg')
             im2 = MIMEImage(open('uploads/'+uploadedsign+'.jpg', 'rb').read(), name=os.path.basename("signature.jpg"))
-            im2.add_header('Content-ID', 'signature.jpg')
+            im2.add_header('Content-ID', '<signature.jpg>')
             message.attach(im2)
             os.remove('uploads/'+uploadedsign+'.jpg')
         with open("./static/conditions-générales-de-vente.pdf", "rb") as attachment:
@@ -439,8 +439,9 @@ submission_data = [currentID,'https://ouverture-de-compte-pro-maison-lejeune.str
 if 'uploadedsign' in st.session_state.keys():
     file6 = drive.CreateFile({'id': st.session_state['uploadedsign']}) 
     file6.GetContentFile('uploads/'+currentID+'signature.jpg')
-pisa.CreatePDF(
-    getEmail(submission_data,open("pdftemplate.tmp", "r").read()).replace('src="signature.jpg"','src="uploads/'+currentID+'signature.jpg"'),  # page data
+pdfinfo = getEmail(submission_data, open("pdftemplate.tmp", "r").read()).replace('src="signature.jpg"','src="uploads/'+currentID+'signature.jpg"')
+pisa.CreatePDF(pdfinfo,
+     # page data
     dest=output, encoding='UTF-8'                                              # destination "file"
 )
 st.download_button('Download PDF', output.getbuffer().tobytes(), file_name='example.pdf', mime='application/pdf')
@@ -487,5 +488,5 @@ if submit_button:
         else:
             worksheet.append_row(submission_data)
             #mail_factures
-        send_email(secret_config["EmailSender"],secret_config["EmailPass"],EmailRecieve,emailSub,getEmail(submission_data,open("pdftemplate.tmp", "r").read()))  
+        send_email(secret_config["EmailSender"],secret_config["EmailPass"],EmailRecieve,emailSub,getEmail(submission_data,open("htmltemplate.tmp", "r").read()))  
         st.success("Form submitted successfully!")
