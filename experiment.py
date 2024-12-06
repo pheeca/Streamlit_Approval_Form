@@ -26,6 +26,8 @@ from xhtml2pdf import pisa
 from email.mime.image import MIMEImage
 from email.mime.base import MIMEBase
 from email import encoders
+from xhtml2pdf.files import getFile, pisaFileObject
+
 
 # Function to generate a random UID for each submission
 def generate_random_uid():
@@ -387,7 +389,7 @@ else:
                 st.toast(f"Fichier téléchargé.")
 
 accpeted=form.checkbox("J’accepte les conditions générales de ventes dont un exemplaire m’a été remis (fourni avec chaque devis ou proforma)",str(accpeted).lower()=='true')
-form.write('<a href="https://www.lejeune.tm.fr/CGV.pdf">conditions</a>', unsafe_allow_html = True)
+form.write('<a href="https://www.lejeune.tm.fr/CGV.pdf">conditions générales de ventes</a>', unsafe_allow_html = True)
 
 line_seperator3=form.divider()
 
@@ -402,12 +404,12 @@ with form:
             stroke_width=3,
             stroke_color='#000000',
             background_color="#EEEEEE",
-            background_image=None,
+            background_image=None, #'uploads/'+currentID+'signature.jpg'
             update_streamlit=True,
             height=200,
             drawing_mode='freedraw',
             point_display_radius=0,
-            #display_toolbar=False,
+            display_toolbar=True,
             key="full_app",
         )
     
@@ -428,16 +430,18 @@ def getEmail(submittedData,tmp):
         if i>=4:
             tmp2 =tmp2.replace("{"+str(i-4)+"}",str(v))
     return tmp2
-
+pisaFileObject.getNamedFile = lambda self: self.uri
 
 output = io.BytesIO()
 dd = json.loads(edited_df.to_json())
 dfdata = [x for xs in list(map(lambda kv:[dd['Nom'][kv[0]],dd['Prénom'][kv[0]],dd['fonction'][kv[0]],dd['Tel'][kv[0]],dd['@'][kv[0]]] ,dd['designation'].items())) for x in xs]
 submission_data = [currentID,'https://ouverture-de-compte-pro-maison-lejeune.streamlit.app/?edit='+currentID,submission_date,edit_date,no_de_compete,establissement,pays,siret,tva_europeen_FR,nom,adresse,code_postal,ville,livraisonpays,societe,facturation_adresse,facturation_code_postal,facturation_ville,envoi_des_factures,mail_factures]+dfdata+[','.join(list(map(lambda g:g['gid'],st.session_state['uploadedpdf']))),accpeted,representePar,date.strftime("%Y-%m-%d %H:%M:%S"),'']#st.session_state['uploadedsign']
-
+if 'uploadedsign' in st.session_state.keys():
+    file6 = drive.CreateFile({'id': st.session_state['uploadedsign']}) 
+    file6.GetContentFile('uploads/'+currentID+'signature.jpg')
 pisa.CreatePDF(
-    getEmail(submission_data,open("pdftemplate.tmp", "r").read()),  # page data
-    dest=output,                                              # destination "file"
+    getEmail(submission_data,open("pdftemplate.tmp", "r").read()).replace('src="signature.jpg"','src="uploads/'+currentID+'signature.jpg"'),  # page data
+    dest=output, encoding='UTF-8'                                              # destination "file"
 )
 st.download_button('Download PDF', output.getbuffer().tobytes(), file_name='example.pdf', mime='application/pdf')
 
