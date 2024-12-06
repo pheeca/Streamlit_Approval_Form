@@ -27,7 +27,7 @@ from email.mime.image import MIMEImage
 from email.mime.base import MIMEBase
 from email import encoders
 from xhtml2pdf.files import getFile, pisaFileObject
-
+import webbrowser
 
 # Function to generate a random UID for each submission
 def generate_random_uid():
@@ -492,3 +492,4 @@ if submit_button:
             #mail_factures
         send_email(secret_config["EmailSender"],secret_config["EmailPass"],EmailRecieve,emailSub,getEmail(submission_data,open("htmltemplate.tmp", "r").read()))  
         st.success("Form submitted successfully!")
+        webbrowser.open(submission_data[1], new = 0)
