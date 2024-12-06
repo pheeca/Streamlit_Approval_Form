@@ -444,7 +444,9 @@ pisa.CreatePDF(pdfinfo,
     dest=output, encoding='UTF-8'                                              # destination "file"
 )
 st.download_button('Download PDF', output.getbuffer().tobytes(), file_name=Heading+'.pdf', mime='application/pdf')
-st.download_button('Download Signature', data=open('uploads/'+currentID+'signature.jpg','rb').read(), file_name=Heading+' Sign.jpg')
+if os.path.isfile('uploads/'+currentID+'signature.jpg'):
+    st.download_button('Download Signature', data=open('uploads/'+currentID+'signature.jpg','rb').read(), file_name=Heading+' Sign.jpg')
+
 
 # Submit button
 if submit_button:
