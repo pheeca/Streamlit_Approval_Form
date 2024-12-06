@@ -423,7 +423,6 @@ visadirection1 = r4col2.caption("VISA DIRECTION")
 visadirection2 = r4col2.caption("MAISON LEJEUNE")
 
 submit_button = form.form_submit_button(label="envoyer ma demande d'ouverture")
-
 def getEmail(submittedData,tmp):
     tmp2=tmp.replace("{"+str(45)+"}",str(datetime.now().year))
     for i,v in enumerate(submittedData):
@@ -444,7 +443,8 @@ pisa.CreatePDF(pdfinfo,
      # page data
     dest=output, encoding='UTF-8'                                              # destination "file"
 )
-st.download_button('Download PDF', output.getbuffer().tobytes(), file_name='example.pdf', mime='application/pdf')
+st.download_button('Download PDF', output.getbuffer().tobytes(), file_name=Heading+'.pdf', mime='application/pdf')
+st.download_button('Download Signature', data=open('uploads/'+currentID+'signature.jpg','rb').read(), file_name=Heading+' Sign.jpg')
 
 # Submit button
 if submit_button:
