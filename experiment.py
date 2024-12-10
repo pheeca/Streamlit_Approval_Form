@@ -399,7 +399,7 @@ if not 'uploadedpdf' in st.session_state.keys():
     st.session_state['uploadedpdf'] = []
 
 if len(fileA)>0:
-    isRemovedFiles = form.checkbox("remove "+str(len(fileA))+" files uploaded already.",len(fileA)>0)
+    isRemovedFiles = form.checkbox("supprimez "+str(len(fileA))+" fichiers déjà téléchargés.",len(fileA)>0)
     if not isRemovedFiles:
         fileA = []
         st.session_state['uploadedpdf'] = []
@@ -488,7 +488,7 @@ if not 'uploadedstamps' in st.session_state.keys():
     st.session_state['uploadedstamps'] = []
 
 if len(fileB)>0:
-    isRemovedFiles2 = form.checkbox("remove "+str(len(fileB))+" stamps files uploaded already.",len(fileB)>0)
+    isRemovedFiles2 = form.checkbox("supprimez "+str(len(fileB))+" fichier de tampon déjà téléchargé.",len(fileB)>0)
     if not isRemovedFiles2:
         fileB = []
         st.session_state['uploadedstamps'] = []
