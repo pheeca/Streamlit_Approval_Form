@@ -154,6 +154,10 @@
                 <p><strong>Signature:</strong></p>
                 <img src="signature.jpg" alt="Signature">
             </div>
+            <div class="stamp">
+                <p><strong>Stamp:</strong></p>
+                <img src="stamp.jpg" alt="Stamp">
+            </div>
         </div>
         <div id="footer_content" style="text-align: center;">
             <p>&copy; {45} Maison Lejeune. Tous droits réservés.</p>

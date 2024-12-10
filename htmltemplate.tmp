@@ -6,8 +6,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: black;
-            color:white;
+            
+            color:black;
             margin: 0;
             padding: 0;
         }
@@ -15,8 +15,8 @@
             width: 80%;
             margin: auto;
             overflow: hidden;
-            background-color: black;
-color:white;
+            
+color:black;
  padding: 20px;
         }
        
@@ -52,7 +52,7 @@ color:white;
 <body>
     <div class="container">
         <div class="header" style="text-align: center;padding: 20px 0;">
-            <img style="width: 150px;"  src="cid:logo-white.svg" alt="Maison Lejeune Logo">
+            <img style="width: 150px;"  src="cid:logo-white.jpg" alt="Maison Lejeune Logo">
             <h1>Ouverture de Compte Pro</h1>
         </div>
         <div class="content">
@@ -141,6 +141,10 @@ color:white;
             <div class="signature">
                 <p><strong>Signature:</strong></p>
                 <img src="cid:signature.jpg" alt="Signature">
+            </div>
+             <div class="signature">
+                <p><strong>Stamp:</strong></p>
+                <img src="cid:stamp.jpg" alt="Stamp">
             </div>
         </div>
         <div class="footer">

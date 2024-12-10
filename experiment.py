@@ -91,6 +91,7 @@ hide_github_icon = """ <style>
 """
 st.markdown(hide_github_icon, unsafe_allow_html=True)
 fileA = []
+fileB = []
 dataSubmission = []
 
 IsEdit = False
@@ -109,12 +110,12 @@ arrdf = [
 
 # Google Sheets setup
 if all( map(lambda l: l in list(st.session_state.keys()),['gdrivesetup']) ):
-    scope,gauth,client,drive,sheet_id,sheet,worksheet,IdDValues,IsEdit,editIndex,edit_date,submission_date,dataSubmission,uploadedsign_in,arrdf,fileA =  st.session_state['gdrivesetup'] 
-    st.session_state['gdrivesetup'] = [scope,gauth,client,drive,sheet_id,sheet,worksheet,IdDValues,IsEdit,editIndex,edit_date,submission_date,dataSubmission,uploadedsign_in,arrdf,fileA]
+    scope,gauth,client,drive,sheet_id,sheet,worksheet,IdDValues,IsEdit,editIndex,edit_date,submission_date,dataSubmission,uploadedsign_in,arrdf,fileA,fileB =  st.session_state['gdrivesetup'] 
+    st.session_state['gdrivesetup'] = [scope,gauth,client,drive,sheet_id,sheet,worksheet,IdDValues,IsEdit,editIndex,edit_date,submission_date,dataSubmission,uploadedsign_in,arrdf,fileA,fileB]
     if len(dataSubmission)==0:
-        no_de_compete,establissement,pays,siret,tva_europeen_FR,nom,adresse,code_postal,ville,livraisonpays,societe,facturation_adresse,facturation_code_postal,facturation_ville,envoi_des_factures,mail_factures,uploadedpdf_in,accpeted,representePar,date_in,uploadedsign_in  = [ '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'False', '', '', '']
+        no_de_compete,establissement,pays,siret,tva_europeen_FR,nom,adresse,code_postal,ville,livraisonpays,societe,facturation_adresse,facturation_code_postal,facturation_ville,envoi_des_factures,mail_factures,uploadedpdf_in,accpeted,representePar,date_in,uploadedsign_in,uploadedstamp_in  = [ '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'False', '', '', '','']
     else:
-        submission_date,edit_date,no_de_compete,establissement,pays,siret,tva_europeen_FR,nom,adresse,code_postal,ville,livraisonpays,societe,facturation_adresse,facturation_code_postal,facturation_ville,envoi_des_factures,mail_factures,uploadedpdf_in,accpeted,representePar,date_in,uploadedsign_in = dataSubmission[2:20]+dataSubmission[45:50]
+        submission_date,edit_date,no_de_compete,establissement,pays,siret,tva_europeen_FR,nom,adresse,code_postal,ville,livraisonpays,societe,facturation_adresse,facturation_code_postal,facturation_ville,envoi_des_factures,mail_factures,uploadedpdf_in,accpeted,representePar,date_in,uploadedsign_in,uploadedstamp_in = dataSubmission[2:20]+dataSubmission[45:51]
 
     if date_in:
         date = parse(date_in)
@@ -133,9 +134,10 @@ else:
     if currentID in IdDValues:
         editIndex = IdDValues.index(currentID)+1
         dataSubmission = worksheet.row_values(editIndex)
+        
         IsEdit = True
         #arrdf
-        submission_date,edit_date,no_de_compete,establissement,pays,siret,tva_europeen_FR,nom,adresse,code_postal,ville,livraisonpays,societe,facturation_adresse,facturation_code_postal,facturation_ville,envoi_des_factures,mail_factures,uploadedpdf_in,accpeted,representePar,date_in,uploadedsign_in = dataSubmission[2:20]+dataSubmission[45:50]
+        submission_date,edit_date,no_de_compete,establissement,pays,siret,tva_europeen_FR,nom,adresse,code_postal,ville,livraisonpays,societe,facturation_adresse,facturation_code_postal,facturation_ville,envoi_des_factures,mail_factures,uploadedpdf_in,accpeted,representePar,date_in,uploadedsign_in,uploadedstamp_in = dataSubmission[2:20]+dataSubmission[45:51]
         i=0
         for ak in arrdf:
             j=0
@@ -154,15 +156,26 @@ else:
                     #metadata = dict( id = uploadedpdfItem )
                     fileA.append({ 'gid':uploadedpdfItem['id'], 'gname':uploadedpdfItem['title'],'uname':uploadedpdfItem['title'][:-33]})
             st.session_state['uploadedpdf'] = fileA
+            
+        if uploadedstamp_in:
+            files = drive.ListFile({'q': "'"+UploadPDFfolder+"' in parents and trashed=false"}).GetList()
+            fileB = []
+            for uploadedstamppdfItem in files:
+                if uploadedstamppdfItem['id'] in uploadedstamp_in.split(','):
+                    #metadata = dict( id = uploadedpdfItem )
+                    fileB.append({ 'gid':uploadedstamppdfItem['id'], 'gname':uploadedstamppdfItem['title'],'uname':uploadedstamppdfItem['title'][:-33]})
+            st.session_state['uploadedstamps'] = fileB
+        
         if uploadedsign_in:
             st.session_state['uploadedsign'] = uploadedsign_in
         #print(uploadedpdf_in,date_in,uploadedsign_in)
     else:
         uploadedsign_in = ''
         fileA = []
-        no_de_compete,establissement,pays,siret,tva_europeen_FR,nom,adresse,code_postal,ville,livraisonpays,societe,facturation_adresse,facturation_code_postal,facturation_ville,envoi_des_factures,mail_factures,uploadedpdf_in,accpeted,representePar,date_in,uploadedsign_in  = [ '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'False', '', '', '']
+        fileB = []
+        no_de_compete,establissement,pays,siret,tva_europeen_FR,nom,adresse,code_postal,ville,livraisonpays,societe,facturation_adresse,facturation_code_postal,facturation_ville,envoi_des_factures,mail_factures,uploadedpdf_in,accpeted,representePar,date_in,uploadedsign_in,uploadedstamp_in  = [ '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'False', '', '', '','']
 
-    st.session_state['gdrivesetup'] = [scope,gauth,client,drive,sheet_id,sheet,worksheet,IdDValues,IsEdit,editIndex,edit_date,submission_date,dataSubmission,uploadedsign_in,arrdf,fileA]
+    st.session_state['gdrivesetup'] = [scope,gauth,client,drive,sheet_id,sheet,worksheet,IdDValues,IsEdit,editIndex,edit_date,submission_date,dataSubmission,uploadedsign_in,arrdf,fileA,fileB]
 
 def send_email(sender_email, sender_password, recipient_email, subject, body):
     try:
@@ -174,8 +187,8 @@ def send_email(sender_email, sender_password, recipient_email, subject, body):
 
         # Attach the body to the message
         message.attach(MIMEText(body, 'html'))
-        im = MIMEImage(open("logo-white.svg", 'rb').read(), _subtype=False, name=os.path.basename("logo-white.svg"))
-        im.add_header('Content-ID', '<logo-white.svg>')
+        im = MIMEImage(open("logo-white.jpg", 'rb').read(),  name=os.path.basename("logo-white.jpg"))
+        im.add_header('Content-ID', '<logo-white.jpg>')
         message.attach(im)
 
         uploadedsign = st.session_state['uploadedsign'] 
@@ -186,13 +199,14 @@ def send_email(sender_email, sender_password, recipient_email, subject, body):
             im2.add_header('Content-ID', '<signature.jpg>')
             message.attach(im2)
             os.remove('uploads/'+uploadedsign+'.jpg')
-        with open("./static/conditions-générales-de-vente.pdf", "rb") as attachment:
+        
+        #with open('uploads/'+currentID+'signature.jpg', "rb") as attachment:
             # Create a MIMEBase object
             part = MIMEBase("application", "octet-stream")
-            part.set_payload(attachment.read())
+            part.set_payload(output.getbuffer().tobytes())
             encoders.encode_base64(part)
             part.add_header(
-                "Content-Disposition", 'attachment', filename=os.path.basename(attachment.name)
+                "Content-Disposition", 'attachment', filename=os.path.basename(Heading+".pdf")
                # f"attachment; filename= {os.path.basename(attachment.name)}",
             )
             message.attach(part)
@@ -213,6 +227,33 @@ def send_email(sender_email, sender_password, recipient_email, subject, body):
             else:
                 message.attach(MIMEImage(open('uploads/'+upedfile['uname']).read()))
             os.remove('uploads/'+upedfile['uname'])
+
+        
+        for upedfile in st.session_state['uploadedstamps']:
+            upfile = drive.CreateFile({'id': upedfile['gid']}) 
+            upfile.GetContentFile('uploads/'+upedfile['uname'])
+            if upedfile['uname'].lower().endswith(".png"):
+                with io.BytesIO() as f:
+                    Image.open('uploads/'+upedfile['uname'], mode='r', formats=None).convert('RGB').save(f,format="JPEG")
+                    im2 = MIMEImage(f.getvalue(), name=os.path.basename(upedfile['uname'].lower().replace('.png','.jpg')))
+                    im2.add_header('Content-ID', '<stamp.jpg>')
+                    message.attach(im2)
+            elif upedfile['uname'].lower().endswith(".jpg"):
+                
+                with open('uploads/'+upedfile['uname'], "rb") as attachment2:
+                    
+                    im2 = MIMEImage(open('uploads/'+uploadedsign+'.jpg', 'rb').read(), name=os.path.basename(attachment2.name))
+                    
+                    im2.add_header('Content-ID', '<stamp.jpg>')
+                    message.attach(im2)
+                    
+                    break
+            else:
+                st.write(11,'uploads/'+upedfile['uname'])
+                message.attach(MIMEImage(open('uploads/'+upedfile['uname'],'rb').read(), name=os.path.basename(attachment2.name)))
+            
+            os.remove('uploads/'+upedfile['uname'])
+            
         #message.attach(MIMEMultipart())
         # Establish a secure session with Gmail's outgoing SMTP server
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
@@ -327,13 +368,15 @@ if envoi_des_factures:
                   ['Courrier',
                    'Email',
                    'Chorus',
-                   'Autre'],default=envoi_des_factures, selection_mode="single",key="envoi_des_factures")
+                   'Autre'],default=envoi_des_factures.split(','), selection_mode="multi",key="envoi_des_factures")
 else:
     envoi_des_factures = r3col2.pills('Envoi des factures :',
                   ['Courrier',
                    'Email',
                    'Chorus',
-                   'Autre'],selection_mode="single",key="envoi_des_factures")
+                   'Autre'],selection_mode="multi",key="envoi_des_factures")
+
+
 mail_factures = r3col2.text_input("MAIL FACTURES :",mail_factures,key="mailfactures" ,help="")
                    
 
@@ -361,7 +404,7 @@ if len(fileA)>0:
         fileA = []
         st.session_state['uploadedpdf'] = []
         cache = st.session_state['gdrivesetup']
-        cache[-1] = []
+        cache[-2] = []
         st.session_state['gdrivesetup'] = cache
 else:
     uploaded_files = form.file_uploader(
@@ -386,7 +429,7 @@ else:
                 li.append({ 'gid':gfile['id'], 'gname':fname,'uname':uploaded_file.name})
                 st.session_state['uploadedpdf'] = li
                 os.remove('uploads/'+fname)
-                st.toast(f"Fichier téléchargé.")
+                st.toast(f"fichier téléchargé avec succès.")
 
 accpeted=form.checkbox("J’accepte les conditions générales de ventes dont un exemplaire m’a été remis (fourni avec chaque devis ou proforma)",str(accpeted).lower()=='true')
 form.write('<a href="https://www.lejeune.tm.fr/CGV.pdf">conditions générales de ventes</a>', unsafe_allow_html = True)
@@ -422,7 +465,6 @@ date = r4col1.date_input("Date",date)
 visadirection1 = r4col2.caption("VISA DIRECTION")
 visadirection2 = r4col2.caption("MAISON LEJEUNE")
 
-submit_button = form.form_submit_button(label="envoyer ma demande d'ouverture")
 def getEmail(submittedData,tmp):
     tmp2=tmp.replace("{"+str(45)+"}",str(datetime.now().year))
     for i,v in enumerate(submittedData):
@@ -434,19 +476,67 @@ pisaFileObject.getNamedFile = lambda self: self.uri
 output = io.BytesIO()
 dd = json.loads(edited_df.to_json())
 dfdata = [x for xs in list(map(lambda kv:[dd['Nom'][kv[0]],dd['Prénom'][kv[0]],dd['fonction'][kv[0]],dd['Tel'][kv[0]],dd['@'][kv[0]]] ,dd['designation'].items())) for x in xs]
-submission_data = [currentID,'https://ouverture-de-compte-pro-maison-lejeune.streamlit.app/?edit='+currentID,submission_date,edit_date,no_de_compete,establissement,pays,siret,tva_europeen_FR,nom,adresse,code_postal,ville,livraisonpays,societe,facturation_adresse,facturation_code_postal,facturation_ville,envoi_des_factures,mail_factures]+dfdata+[','.join(list(map(lambda g:g['gid'],st.session_state['uploadedpdf']))),accpeted,representePar,date.strftime("%Y-%m-%d %H:%M:%S"),'']#st.session_state['uploadedsign']
 if 'uploadedsign' in st.session_state.keys():
     file6 = drive.CreateFile({'id': st.session_state['uploadedsign']}) 
     file6.GetContentFile('uploads/'+currentID+'signature.jpg')
-pdfinfo = getEmail(submission_data, open("pdftemplate.tmp", "r").read()).replace('src="signature.jpg"','src="uploads/'+currentID+'signature.jpg"')
+
+
+
+
+
+if not 'uploadedstamps' in st.session_state.keys():
+    st.session_state['uploadedstamps'] = []
+
+if len(fileB)>0:
+    isRemovedFiles2 = form.checkbox("remove "+str(len(fileB))+" stamps files uploaded already.",len(fileB)>0)
+    if not isRemovedFiles2:
+        fileB = []
+        st.session_state['uploadedstamps'] = []
+        cache = st.session_state['gdrivesetup']
+        cache[-1] = []
+        st.session_state['gdrivesetup'] = cache
+    else:
+        file6 = drive.CreateFile({'id': st.session_state['uploadedstamps'][0]['gid']}) 
+        file6.GetContentFile('uploads/'+currentID+'stamp.jpg')
+else:
+    uploaded_stamps = form.file_uploader(
+      "mettre un upload du cachet de l'entreprise + un upload d'un KBIS ou registre de commerce", accept_multiple_files=True
+    )
+    for uploaded_stamps_file in uploaded_stamps:
+        uploaded_stamps_Info = next(filter(lambda up:up['uname']==uploaded_stamps_file.name,list(st.session_state['uploadedstamps'])),None)
+        if uploaded_stamps_Info is None:
+            bytes_data = uploaded_stamps_file.read()
+            fname = uploaded_stamps_file.name+"-"+generate_random_uid()
+            gfile = drive.CreateFile({"parents": [{'id': UploadPDFfolder}], "title": fname, 'mimeType':uploaded_stamps_file.type})
+            with open('uploads/'+fname, "wb") as binary_file:
+                binary_file.write(bytes_data)
+            gfile.SetContentFile('uploads/'+fname)
+            try:
+                gfile.Upload()
+            finally:
+                gfile.content.close()
+        
+            if gfile.uploaded:
+                li = st.session_state['uploadedstamps']
+                li.append({ 'gid':gfile['id'], 'gname':fname,'uname':uploaded_stamps_file.name})
+                st.session_state['uploadedstamps'] = li
+                os.remove('uploads/'+fname)
+                st.toast(f"fichiers de tampons téléchargés avec succès.")
+
+
+
+submit_button = form.form_submit_button(label="envoyer ma demande d'ouverture")
+submission_data = [currentID,'https://ouverture-de-compte-pro-maison-lejeune.streamlit.app/?edit='+currentID,submission_date,edit_date,no_de_compete,establissement,pays,siret,tva_europeen_FR,nom,adresse,code_postal,ville,livraisonpays,societe,facturation_adresse,facturation_code_postal,facturation_ville,envoi_des_factures,mail_factures]+dfdata+[','.join(list(map(lambda g:g['gid'],st.session_state['uploadedpdf']))),accpeted,representePar,date.strftime("%Y-%m-%d %H:%M:%S"),'',','.join(list(map(lambda g:g['gid'],st.session_state['uploadedstamps'])))]#st.session_state['uploadedsign']
+
+pdfinfo = getEmail(submission_data, open("pdftemplate.tmp", "r").read()).replace('src="signature.jpg"','src="uploads/'+currentID+'signature.jpg"').replace('src="stamp.jpg"','src="uploads/'+currentID+'stamp.jpg"')
 pisa.CreatePDF(pdfinfo,
      # page data
     dest=output, encoding='UTF-8'                                              # destination "file"
 )
 st.download_button('Download PDF', output.getbuffer().tobytes(), file_name=Heading+'.pdf', mime='application/pdf')
+
 if os.path.isfile('uploads/'+currentID+'signature.jpg'):
     st.download_button('Download Signature', data=open('uploads/'+currentID+'signature.jpg','rb').read(), file_name=Heading+' Sign.jpg')
-
 
 # Submit button
 if submit_button:
@@ -479,9 +569,10 @@ if submit_button:
             submission_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         else:
             edit_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
         dd = json.loads(edited_df.to_json())
         dfdata = [x for xs in list(map(lambda kv:[dd['Nom'][kv[0]],dd['Prénom'][kv[0]],dd['fonction'][kv[0]],dd['Tel'][kv[0]],dd['@'][kv[0]]] ,dd['designation'].items())) for x in xs]
-        submission_data = [currentID,'https://ouverture-de-compte-pro-maison-lejeune.streamlit.app/?edit='+currentID,submission_date,edit_date,no_de_compete,establissement,pays,siret,tva_europeen_FR,nom,adresse,code_postal,ville,livraisonpays,societe,facturation_adresse,facturation_code_postal,facturation_ville,envoi_des_factures,mail_factures]+dfdata+[','.join(list(map(lambda g:g['gid'],st.session_state['uploadedpdf']))),accpeted,representePar,date.strftime("%Y-%m-%d %H:%M:%S"),st.session_state['uploadedsign']]
+        submission_data = [currentID,'https://ouverture-de-compte-pro-maison-lejeune.streamlit.app/?edit='+currentID,submission_date,edit_date,no_de_compete,establissement,pays,siret,tva_europeen_FR,nom,adresse,code_postal,ville,livraisonpays,societe,facturation_adresse,facturation_code_postal,facturation_ville,','.join(list(envoi_des_factures)),mail_factures]+dfdata+[','.join(list(map(lambda g:g['gid'],st.session_state['uploadedpdf']))),accpeted,representePar,date.strftime("%Y-%m-%d %H:%M:%S"),st.session_state['uploadedsign'],','.join(list(map(lambda g:g['gid'],st.session_state['uploadedstamps'])))]   
         emailSub="Form Submitted"
         if IsEdit:
             emailSub="Form Edited"
@@ -493,3 +584,19 @@ if submit_button:
         send_email(secret_config["EmailSender"],secret_config["EmailPass"],EmailRecieve,emailSub,getEmail(submission_data,open("htmltemplate.tmp", "r").read()))  
         st.success("Form submitted successfully!")
         webbrowser.open(submission_data[1], new = 0)
+        if IsEdit:
+            scriptrun="window.location.reload();"
+        else:
+            scriptrun='location.origin+location.pathname+"??edit='+currentID+';'
+        st.markdown(
+            """
+            <div id="div"></div>
+            <script>
+                """+scriptrun+"""
+
+            </script>
+            """,
+            unsafe_allow_html=True,
+        )
+    else:
+        st.warning("formulaire non remis, veillez à signer, JOINDRE 1 K-BIS - 3 mois et un RIB dûment remis. L'acceptation des conditions générales de vente est également requise.")
