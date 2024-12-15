@@ -22,11 +22,7 @@
 
           @page regular_template {
                 size: letter portrait;
-                @frame header_frame {           
-                    -pdf-frame-content: header_content;
-                    left: 50pt; width: 512pt; top: 50pt; height: 40pt;
-                }
-
+               
                 @frame logo_area1 {             
                     left: 44pt; width: 245pt; top: 30pt; height: 150pt;
                 }
@@ -35,18 +31,43 @@
                     left: 323pt; width: 245pt; top: 30pt; height: 150pt;
                 }
                           
-                @frame top_area1 {             
+                @frame top_area1 {          
+                    -xpdf-frame-border: 1;   
                     left: 44pt; width: 245pt; top: 150pt; height: 70pt;
                 }
                        
-                @frame top_area2 {             
+                @frame top_area2 {  
+                    -xpdf-frame-border: 1;           
                     left: 323pt; width: 245pt; top: 150pt; height: 70pt;
                 }         
 
-                @frame main_area1 {             
-                    left: 44pt; width: 512pt; top: 220pt; height: 500pt;
+                @frame main_area1 { 
+                    -xpdf-frame-border: 1;            
+                    left: 44pt; width: 245pt; top: 220pt; height: 130pt;
+                    font-size: 6pt;
+                }
+                
+                @frame main_area2 { 
+                    -xpdf-frame-border: 1;            
+                    left: 323pt; width: 245pt; top: 220pt; height: 150pt;
+                    font-size: 6pt;
                 }
 
+                 @frame main_area3 { 
+                    -xpdf-frame-border: 1;            
+                    left: 44pt; width: 530pt; top: 370pt; height: 192pt;
+                    font-size: 6pt;
+                }
+                @frame main_area4 { 
+                    -xpdf-frame-border: 1;            
+                    left: 44pt; width: 245pt; top: 562pt; height: 160pt;
+                    font-size: 6pt;
+                }
+                @frame main_area5 { 
+                    -xpdf-frame-border: 1;            
+                    left: 323pt; width: 245pt; top: 562pt; height: 160pt;
+                    font-size: 6pt;
+                }
                 @frame footer_frame {           
                     -pdf-frame-content: footer_content;
                     left: 50pt; width: 512pt; top: 772pt; height: 20pt;
@@ -80,6 +101,7 @@
             <p><strong>Code Postal:</strong> {7}</p>
             <p><strong>Ville:</strong> {8}</p>
             <p><strong>Pays:</strong> {9}</p>
+            <p><strong></strong></p></ br></ br></ br></ br>
 </div><div>
             <h2>Facturation (si différente)</h2>
             <p><strong>Société:</strong> {10}</p>
@@ -90,7 +112,7 @@
             <p><strong>Mail Factures:</strong> {15}</p>
 </div><div>
             <h2>Contacts</h2>
-            <table  width="100%" border="1" cellspacing="0" cellpadding="5">
+            <table style="font-size: 10px;"  width="100%" border="1" cellspacing="0" cellpadding="5">
                 <thead>
                     <tr>
                         <th>Désignation</th>
@@ -145,21 +167,23 @@
                 </tbody>
             </table>
             <div>
-            <a href"https://www.lejeune.tm.fr/CGV.pdf">conditions générales de vente</a>
-            <h2>Le Client</h2>
+            <a href="https://www.lejeune.tm.fr/CGV.pdf">conditions générales de vente</a>
+            <h2 style="text-align: center;">Le Client</h2>
             <p><strong>Représenté par:</strong> {43}</p>
             <p><strong>Date:</strong> {44}</p>
-            <p><strong>Visa Direction:</strong></p>
             <div class="signature">
                 <p><strong>Signature:</strong></p>
                 <img src="signature.jpg" alt="Signature">
             </div>
+            </ br>
+            <p><strong>Visa Direction:</strong></p>
             <div class="stamp">
                 <p><strong>Stamp:</strong></p>
                 <img src="stamp.jpg" alt="Stamp">
             </div>
         </div>
-        <div id="footer_content" style="text-align: center;">
+
+ <div id="footer_content" style="text-align: center;">
             <p>&copy; {45} Maison Lejeune. Tous droits réservés.</p>
         </div>
     </div>

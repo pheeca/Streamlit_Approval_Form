@@ -29,6 +29,8 @@ from email import encoders
 from xhtml2pdf.files import getFile, pisaFileObject
 import webbrowser
 
+
+
 # Function to generate a random UID for each submission
 def generate_random_uid():
     return uuid.uuid4().hex
@@ -529,11 +531,12 @@ submit_button = form.form_submit_button(label="envoyer ma demande d'ouverture")
 submission_data = [currentID,'https://ouverture-de-compte-pro-maison-lejeune.streamlit.app/?edit='+currentID,submission_date,edit_date,no_de_compete,establissement,pays,siret,tva_europeen_FR,nom,adresse,code_postal,ville,livraisonpays,societe,facturation_adresse,facturation_code_postal,facturation_ville,envoi_des_factures,mail_factures]+dfdata+[','.join(list(map(lambda g:g['gid'],st.session_state['uploadedpdf']))),accpeted,representePar,date.strftime("%Y-%m-%d %H:%M:%S"),'',','.join(list(map(lambda g:g['gid'],st.session_state['uploadedstamps'])))]#st.session_state['uploadedsign']
 
 pdfinfo = getEmail(submission_data, open("pdftemplate.tmp", "r").read()).replace('src="signature.jpg"','src="uploads/'+currentID+'signature.jpg"').replace('src="stamp.jpg"','src="uploads/'+currentID+'stamp.jpg"')
-pisa.CreatePDF(pdfinfo,
+pisa.CreatePDF(pdfinfo,debug=1,
      # page data
     dest=output, encoding='UTF-8'                                              # destination "file"
 )
 st.download_button('Download PDF', output.getbuffer().tobytes(), file_name=Heading+'.pdf', mime='application/pdf')
+
 
 if os.path.isfile('uploads/'+currentID+'signature.jpg'):
     st.download_button('Download Signature', data=open('uploads/'+currentID+'signature.jpg','rb').read(), file_name=Heading+' Sign.jpg')
