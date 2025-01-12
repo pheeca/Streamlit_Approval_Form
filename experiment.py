@@ -181,90 +181,91 @@ else:
 
 def send_email(sender_email, sender_password, recipient_email, subject, body):
     try:
-        # Create a MIME object
-        message = MIMEMultipart('alternative')
-        message['From'] = sender_email
-        message['To'] = recipient_email
-        message['Subject'] = subject
+        if len(recipient_email)>0:
+            # Create a MIME object
+            message = MIMEMultipart('alternative')
+            message['From'] = sender_email
+            message['To'] = recipient_email
+            message['Subject'] = subject
 
-        # Attach the body to the message
-        message.attach(MIMEText(body, 'html'))
-        im = MIMEImage(open("logo-white.jpg", 'rb').read(),  name=os.path.basename("logo-white.jpg"))
-        im.add_header('Content-ID', '<logo-white.jpg>')
-        message.attach(im)
+            # Attach the body to the message
+            message.attach(MIMEText(body, 'html'))
+            im = MIMEImage(open("logo-white.jpg", 'rb').read(),  name=os.path.basename("logo-white.jpg"))
+            im.add_header('Content-ID', '<logo-white.jpg>')
+            message.attach(im)
 
-        uploadedsign = st.session_state['uploadedsign'] 
-        if uploadedsign:  
-            file6 = drive.CreateFile({'id': uploadedsign}) 
-            file6.GetContentFile('uploads/'+uploadedsign+'.jpg')
-            im2 = MIMEImage(open('uploads/'+uploadedsign+'.jpg', 'rb').read(), name=os.path.basename("signature.jpg"))
-            im2.add_header('Content-ID', '<signature.jpg>')
-            message.attach(im2)
-            os.remove('uploads/'+uploadedsign+'.jpg')
+            uploadedsign = st.session_state['uploadedsign'] 
+            if uploadedsign:  
+                file6 = drive.CreateFile({'id': uploadedsign}) 
+                file6.GetContentFile('uploads/'+uploadedsign+'.jpg')
+                im2 = MIMEImage(open('uploads/'+uploadedsign+'.jpg', 'rb').read(), name=os.path.basename("signature.jpg"))
+                im2.add_header('Content-ID', '<signature.jpg>')
+                message.attach(im2)
+                os.remove('uploads/'+uploadedsign+'.jpg')
         
-        #with open('uploads/'+currentID+'signature.jpg', "rb") as attachment:
-            # Create a MIMEBase object
-            part = MIMEBase("application", "octet-stream")
-            part.set_payload(output.getbuffer().tobytes())
-            encoders.encode_base64(part)
-            part.add_header(
-                "Content-Disposition", 'attachment', filename=os.path.basename(Heading+".pdf")
-               # f"attachment; filename= {os.path.basename(attachment.name)}",
-            )
-            message.attach(part)
-        #message.attach(MIMEText(open("./static/conditions-générales-de-vente.pdf", encoding="utf8").read()))
-        for upedfile in st.session_state['uploadedpdf']:
-            upfile = drive.CreateFile({'id': upedfile['gid']}) 
-            upfile.GetContentFile('uploads/'+upedfile['uname'])
-            if upedfile['uname'].lower().endswith(".pdf"):
-                with open('uploads/'+upedfile['uname'], "rb") as attachment2:
-                    part2 = MIMEBase("application", "octet-stream")
-                    part2.set_payload(attachment2.read())
-                    encoders.encode_base64(part2)
-                    part2.add_header(
-                        "Content-Disposition",
-                        f"attachment; filename= {os.path.basename(attachment2.name)}",
-                    )
-                    message.attach(part2)
-            else:
-                message.attach(MIMEImage(open('uploads/'+upedfile['uname']).read()))
-            os.remove('uploads/'+upedfile['uname'])
+            #with open('uploads/'+currentID+'signature.jpg', "rb") as attachment:
+                # Create a MIMEBase object
+                part = MIMEBase("application", "octet-stream")
+                part.set_payload(output.getbuffer().tobytes())
+                encoders.encode_base64(part)
+                part.add_header(
+                    "Content-Disposition", 'attachment', filename=os.path.basename(Heading+".pdf")
+                   # f"attachment; filename= {os.path.basename(attachment.name)}",
+                )
+                message.attach(part)
+            #message.attach(MIMEText(open("./static/conditions-générales-de-vente.pdf", encoding="utf8").read()))
+            for upedfile in st.session_state['uploadedpdf']:
+                upfile = drive.CreateFile({'id': upedfile['gid']}) 
+                upfile.GetContentFile('uploads/'+upedfile['uname'])
+                if upedfile['uname'].lower().endswith(".pdf"):
+                    with open('uploads/'+upedfile['uname'], "rb") as attachment2:
+                        part2 = MIMEBase("application", "octet-stream")
+                        part2.set_payload(attachment2.read())
+                        encoders.encode_base64(part2)
+                        part2.add_header(
+                            "Content-Disposition",
+                            f"attachment; filename= {os.path.basename(attachment2.name)}",
+                        )
+                        message.attach(part2)
+                else:
+                    message.attach(MIMEImage(open('uploads/'+upedfile['uname']).read()))
+                os.remove('uploads/'+upedfile['uname'])
 
         
-        for upedfile in st.session_state['uploadedstamps']:
-            upfile = drive.CreateFile({'id': upedfile['gid']}) 
-            upfile.GetContentFile('uploads/'+upedfile['uname'])
-            if upedfile['uname'].lower().endswith(".png"):
-                with io.BytesIO() as f:
-                    Image.open('uploads/'+upedfile['uname'], mode='r', formats=None).convert('RGB').save(f,format="JPEG")
-                    im2 = MIMEImage(f.getvalue(), name=os.path.basename(upedfile['uname'].lower().replace('.png','.jpg')))
-                    im2.add_header('Content-ID', '<stamp.jpg>')
-                    message.attach(im2)
-            elif upedfile['uname'].lower().endswith(".jpg"):
+            for upedfile in st.session_state['uploadedstamps']:
+                upfile = drive.CreateFile({'id': upedfile['gid']}) 
+                upfile.GetContentFile('uploads/'+upedfile['uname'])
+                if upedfile['uname'].lower().endswith(".png"):
+                    with io.BytesIO() as f:
+                        Image.open('uploads/'+upedfile['uname'], mode='r', formats=None).convert('RGB').save(f,format="JPEG")
+                        im2 = MIMEImage(f.getvalue(), name=os.path.basename(upedfile['uname'].lower().replace('.png','.jpg')))
+                        im2.add_header('Content-ID', '<stamp.jpg>')
+                        message.attach(im2)
+                elif upedfile['uname'].lower().endswith(".jpg"):
                 
-                with open('uploads/'+upedfile['uname'], "rb") as attachment2:
+                    with open('uploads/'+upedfile['uname'], "rb") as attachment2:
                     
-                    im2 = MIMEImage(open('uploads/'+uploadedsign+'.jpg', 'rb').read(), name=os.path.basename(attachment2.name))
+                        im2 = MIMEImage(open('uploads/'+uploadedsign+'.jpg', 'rb').read(), name=os.path.basename(attachment2.name))
                     
-                    im2.add_header('Content-ID', '<stamp.jpg>')
-                    message.attach(im2)
+                        im2.add_header('Content-ID', '<stamp.jpg>')
+                        message.attach(im2)
                     
-                    break
-            else:
-                st.write(11,'uploads/'+upedfile['uname'])
-                message.attach(MIMEImage(open('uploads/'+upedfile['uname'],'rb').read(), name=os.path.basename(attachment2.name)))
+                        break
+                else:
+                    st.write(11,'uploads/'+upedfile['uname'])
+                    message.attach(MIMEImage(open('uploads/'+upedfile['uname'],'rb').read(), name=os.path.basename(attachment2.name)))
             
-            os.remove('uploads/'+upedfile['uname'])
+                os.remove('uploads/'+upedfile['uname'])
             
-        #message.attach(MIMEMultipart())
-        # Establish a secure session with Gmail's outgoing SMTP server
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:
-            server.starttls()  # Secure the connection
-            server.login(sender_email, sender_password)  # Log in with app password
-            text = message.as_string()
-            #server.sendmail()
-            server.sendmail(sender_email, recipient_email, text)  # Send the email
-            print("Email sent successfully!")
+            #message.attach(MIMEMultipart())
+            # Establish a secure session with Gmail's outgoing SMTP server
+            with smtplib.SMTP('smtp.gmail.com', 587) as server:
+                server.starttls()  # Secure the connection
+                server.login(sender_email, sender_password)  # Log in with app password
+                text = message.as_string()
+                #server.sendmail()
+                server.sendmail(sender_email, recipient_email, text)  # Send the email
+                print("Email sent successfully!")
     
     except Exception as e:
         print(f"Failed to send email: {e}")
@@ -580,7 +581,7 @@ if submit_button:
         if IsEdit:
             emailSub="Form Edited"
             #worksheet.update(submission_data,range_name= 'A'+str(editIndex+1)+':AX'+str(editIndex+1))
-            worksheet.update('A'+str(editIndex),[submission_data])
+            worksheet.update(range_name='A'+str(editIndex),values=[submission_data])
         else:
             worksheet.append_row(submission_data)
             #mail_factures
